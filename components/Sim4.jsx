@@ -19,27 +19,30 @@ export default function Sim4() {
       name: '산소 (O₂)',
       icon: '🟠',
       type: '단순확산',
-      equation: 'J = P(C_out - C_in)',
-      simpleEquation: 'y = 0.2(x - 5)',
-      color: '#f97316',
-      calc: (out) => 0.2 * (out - 5),
-      molecule: '⚪',
-      hasProtein: false,
+      equation: 'y = x - 5',
+      originalEq: 'J = P(C_out - C_in)',
       description: 'Fick의 확산 법칙',
-      params: 'P=0.2 (막 투과도), C_in=5 (세포 안 농도 고정)'
+      params: 'P=1 (막 투과도), C_in=5mM (세포 안 농도 고정)',
+      color: '#f97316',
+      calc: (out) => out - 5,
+      molecule: '⚪',
+      hasProtein: false
     },
     glucose: {
       name: '포도당',
       icon: '🟢',
       type: '운반체 촉진확산',
-      equation: 'J = V_max × C / (K_m + C)',
-      simpleEquation: 'y = 10x / (3 + x)',
-      color: '#22c55e',
-      calc: (out) => (10 * out) / (3 + out),
-      molecule: '🟩',
-      hasProtein: 'carrier',
+      equation: 'y = 10(x-5)/(2+|x-5|)',
+      originalEq: 'J = V_max × C / (K_m + C)',
       description: 'Michaelis-Menten 형태',
-      params: 'V_max=10 (최대 속도), K_m=3 (반포화 농도)'
+      params: 'V_max=10 (최대 속도), K_m=2 (반포화 농도)',
+      color: '#22c55e',
+      calc: (out) => {
+        const diff = out - 5;
+        return (10 * diff) / (2 + Math.abs(diff));
+      },
+      molecule: '🟩',
+      hasProtein: 'carrier'
     }
   };
 
@@ -60,14 +63,12 @@ export default function Sim4() {
   useEffect(() => {
     if (!mode || !isAnimating || isEquilibrium) return;
 
-    // 속도가 느려도 애니메이션이 보이도록 최소 간격 설정
-    const baseInterval = Math.max(500, Math.min(2000, 1000 / Math.max(0.1, Math.abs(velocity))));
+    const baseInterval = Math.max(200, 1000 / Math.max(0.3, Math.abs(velocity)));
     
     const interval = setInterval(() => {
       const isInward = velocity > 0;
       
-      // 밖 → 안으로 (농도가 높을 때)
-      if (isInward && outsideConc > finalEquilibrium + 0.01) {
+      if (isInward && outsideConc > finalEquilibrium) {
         const newParticle = { id: Date.now() + Math.random(), direction: 'down' };
         setMovingParticles(prev => [...prev, newParticle]);
         setTimeout(() => {
@@ -75,9 +76,7 @@ export default function Sim4() {
           setInsideConc(prev => Math.min(finalEquilibrium, prev + 0.5));
           setMovingParticles(prev => prev.filter(p => p.id !== newParticle.id));
         }, 1200);
-      } 
-      // 안 → 밖으로 (농도가 낮을 때)
-      else if (!isInward && outsideConc < finalEquilibrium - 0.01) {
+      } else if (!isInward && insideConc > finalEquilibrium) {
         const newParticle = { id: Date.now() + Math.random(), direction: 'up' };
         setMovingParticles(prev => [...prev, newParticle]);
         setTimeout(() => {
@@ -127,7 +126,6 @@ export default function Sim4() {
     }
   `;
 
-  // ✅ 처음부터 다시 함수
   const handleRestart = () => {
     setIsAnimating(false);
     setOutsideConc(initialOutside);
@@ -203,13 +201,13 @@ export default function Sim4() {
             {/* ✅ 함수 식 설명 추가 */}
             <div style={{ background: 'linear-gradient(135deg, #f0f9ff, #e0f2fe)', borderRadius: '0.75rem', padding: 'clamp(1rem, 2vw, 1.5rem)', marginBottom: '1.5rem', border: '2px solid #0ea5e9' }}>
               <p style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', fontWeight: '700', color: '#0c4a6e', marginBottom: '0.5rem', textAlign: 'center' }}>📐 {currentMode.description}</p>
-              <p style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', color: '#075985', marginBottom: '0.25rem', textAlign: 'center', fontFamily: 'monospace' }}>
-                원래 식: {currentMode.equation}
+              <p style={{ fontSize: 'clamp(0.8rem, 1.8vw, 0.9rem)', color: '#075985', marginBottom: '0.25rem', textAlign: 'center', fontFamily: 'monospace' }}>
+                원래 식: {currentMode.originalEq}
               </p>
-              <p style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', color: '#0369a1', marginBottom: '0.25rem', textAlign: 'center', fontFamily: 'monospace' }}>
-                시뮬레이션 식: {currentMode.simpleEquation}
+              <p style={{ fontSize: 'clamp(0.8rem, 1.8vw, 0.9rem)', color: '#0369a1', marginBottom: '0.25rem', textAlign: 'center', fontFamily: 'monospace' }}>
+                시뮬레이션 식: {currentMode.equation}
               </p>
-              <p style={{ fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)', color: '#0284c7', margin: 0, textAlign: 'center' }}>
+              <p style={{ fontSize: 'clamp(0.75rem, 1.5vw, 0.825rem)', color: '#0284c7', margin: 0, textAlign: 'center' }}>
                 {currentMode.params}
               </p>
             </div>
@@ -223,7 +221,7 @@ export default function Sim4() {
               <div style={{ background: 'linear-gradient(135deg, #fce7f3, #fbcfe8)', borderRadius: '0.75rem', padding: 'clamp(1.5rem, 3vw, 2rem)', textAlign: 'center', border: '3px solid #ec4899' }}>
                 <p style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', fontWeight: '700', color: '#be185d', marginBottom: '0.5rem' }}>🏠 세포 안 (C_in)</p>
                 <p style={{ fontSize: 'clamp(2.5rem, 8vw, 4rem)', fontWeight: '700', color: '#831843', margin: 0 }}>5.0</p>
-                <p style={{ fontSize: 'clamp(1rem, 3vw, 1.5rem)', fontWeight: '700', color: '#ec4899' }}>mM (고정값)</p>
+                <p style={{ fontSize: 'clamp(1rem, 3vw, 1.5rem)', fontWeight: '700', color: '#ec4899' }}>mM (고정)</p>
               </div>
             </div>
 
@@ -407,7 +405,7 @@ export default function Sim4() {
               <LineChart data={graphData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="x" label={{ value: '세포 밖 농도 (mM)', position: 'insideBottom', offset: -5, style: { fontSize: 'clamp(0.7rem, 1.5vw, 0.875rem)' } }} domain={[0, 10]} />
-                <YAxis label={{ value: '속도 (μmol/min)', angle: -90, position: 'insideLeft', style: { fontSize: 'clamp(0.7rem, 1.5vw, 0.875rem)' } }} domain={mode === 'glucose' ? [-2, 8] : [-1, 1]} />
+                <YAxis label={{ value: '속도 (μmol/min)', angle: -90, position: 'insideLeft', style: { fontSize: 'clamp(0.7rem, 1.5vw, 0.875rem)' } }} domain={mode === 'glucose' ? [-8, 8] : [-5, 5]} />
                 <Tooltip />
                 <Line type="monotone" dataKey="y" stroke={currentMode.color} strokeWidth={3} dot={false} />
                 <ReferenceLine y={0} stroke="#666" strokeDasharray="3 3" />
@@ -416,11 +414,11 @@ export default function Sim4() {
               </LineChart>
             </ResponsiveContainer>
             <div style={{ marginTop: '1rem', padding: '0.75rem', background: '#f9fafb', borderRadius: '0.5rem' }}>
-              <p style={{ fontSize: 'clamp(0.75rem, 1.8vw, 0.875rem)', fontWeight: '700', color: '#374151', margin: '0 0 0.5rem 0' }}>
+              <p style={{ fontSize: 'clamp(0.75rem, 1.8vw, 0.875rem)', fontWeight: '700', color: '#374151', margin: '0 0 0.25rem 0' }}>
                 현재: ({outsideConc.toFixed(1)} mM, {velocity.toFixed(2)} μmol/min)
               </p>
               <p style={{ fontSize: 'clamp(0.7rem, 1.5vw, 0.8rem)', color: '#6b7280', margin: 0, fontFamily: 'monospace' }}>
-                {currentMode.simpleEquation}
+                {currentMode.equation}
               </p>
             </div>
 
@@ -431,7 +429,7 @@ export default function Sim4() {
                 <strong>원래 식:</strong> {currentMode.description}
               </p>
               <p style={{ fontSize: 'clamp(0.7rem, 1.5vw, 0.8rem)', color: '#78350f', margin: 0, fontFamily: 'monospace', lineHeight: '1.5' }}>
-                {currentMode.equation}<br/>
+                {currentMode.originalEq}<br/>
                 설정값: {currentMode.params}
               </p>
             </div>
