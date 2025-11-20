@@ -60,12 +60,14 @@ export default function Sim4() {
   useEffect(() => {
     if (!mode || !isAnimating || isEquilibrium) return;
 
-    const baseInterval = Math.max(200, 1000 / Math.max(0.3, Math.abs(velocity)));
+    // 속도가 느려도 애니메이션이 보이도록 최소 간격 설정
+    const baseInterval = Math.max(500, Math.min(2000, 1000 / Math.max(0.1, Math.abs(velocity))));
     
     const interval = setInterval(() => {
       const isInward = velocity > 0;
       
-      if (isInward && outsideConc > finalEquilibrium) {
+      // 밖 → 안으로 (농도가 높을 때)
+      if (isInward && outsideConc > finalEquilibrium + 0.01) {
         const newParticle = { id: Date.now() + Math.random(), direction: 'down' };
         setMovingParticles(prev => [...prev, newParticle]);
         setTimeout(() => {
@@ -73,7 +75,9 @@ export default function Sim4() {
           setInsideConc(prev => Math.min(finalEquilibrium, prev + 0.5));
           setMovingParticles(prev => prev.filter(p => p.id !== newParticle.id));
         }, 1200);
-      } else if (!isInward && insideConc > finalEquilibrium) {
+      } 
+      // 안 → 밖으로 (농도가 낮을 때)
+      else if (!isInward && outsideConc < finalEquilibrium - 0.01) {
         const newParticle = { id: Date.now() + Math.random(), direction: 'up' };
         setMovingParticles(prev => [...prev, newParticle]);
         setTimeout(() => {
