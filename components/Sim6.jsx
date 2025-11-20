@@ -85,7 +85,6 @@ export default function Sim6() {
           </p>
         </div>
 
-        {/* ✅ 수정: 동물 이름 제거, A~F만 표시 */}
         <div style={{ background: 'white', borderRadius: '1.5rem', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', padding: 'clamp(1.5rem, 3vw, 2rem)', marginBottom: 'clamp(1.5rem, 3vw, 2rem)' }}>
           <h2 style={{ fontSize: 'clamp(1.25rem, 3vw, 1.5rem)', fontWeight: '700', color: '#1f2937', marginBottom: '1rem', textAlign: 'center' }}>
             견종 선택
@@ -180,6 +179,7 @@ export default function Sim6() {
               함수 매핑 다이어그램
             </h2>
 
+            {/* ✅ 수정: 박스 크기 통일 & 직선 화살표 */}
             <div style={{ position: 'relative', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(2rem, 4vw, 3rem)' }}>
               <div>
                 <div style={{ background: 'linear-gradient(135deg, #dbeafe, #bfdbfe)', borderRadius: '0.75rem', padding: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '1rem', textAlign: 'center', border: '2px solid #3b82f6' }}>
@@ -200,7 +200,11 @@ export default function Sim6() {
                         textAlign: 'center',
                         transition: 'all 0.3s',
                         transform: selectedBreed === key ? 'scale(1.05)' : 'scale(1)',
-                        boxShadow: selectedBreed === key ? '0 4px 6px rgba(0,0,0,0.1)' : 'none'
+                        boxShadow: selectedBreed === key ? '0 4px 6px rgba(0,0,0,0.1)' : 'none',
+                        minHeight: 'clamp(3rem, 8vw, 4rem)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
                       }}
                     >
                       <p style={{ fontWeight: '700', fontSize: 'clamp(1.5rem, 4vw, 2rem)', margin: 0 }}>{key.toUpperCase()}</p>
@@ -227,7 +231,11 @@ export default function Sim6() {
                         color: selectedBreed === key ? 'white' : '#15803d',
                         transition: 'all 0.3s',
                         transform: selectedBreed === key ? 'scale(1.05)' : 'scale(1)',
-                        boxShadow: selectedBreed === key ? '0 4px 6px rgba(0,0,0,0.1)' : 'none'
+                        boxShadow: selectedBreed === key ? '0 4px 6px rgba(0,0,0,0.1)' : 'none',
+                        minHeight: 'clamp(3rem, 8vw, 4rem)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
                       }}
                     >
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'center' }}>
@@ -239,31 +247,19 @@ export default function Sim6() {
                 </div>
               </div>
 
-              {/* ✅ 수정: 곡선 화살표로 변경 */}
+              {/* ✅ 직선 화살표 */}
               <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
                 <defs>
                   <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
                     <polygon points="0 0, 10 3, 0 6" fill="#dc2626" />
                   </marker>
                 </defs>
-                {selectedBreed === 'a' && (
-                  <path d="M 45 15 Q 50 10, 55 15" stroke="#dc2626" strokeWidth="3" fill="none" markerEnd="url(#arrowhead)" />
-                )}
-                {selectedBreed === 'b' && (
-                  <path d="M 45 27 Q 50 22, 55 27" stroke="#dc2626" strokeWidth="3" fill="none" markerEnd="url(#arrowhead)" />
-                )}
-                {selectedBreed === 'c' && (
-                  <path d="M 45 39 Q 50 34, 55 39" stroke="#dc2626" strokeWidth="3" fill="none" markerEnd="url(#arrowhead)" />
-                )}
-                {selectedBreed === 'd' && (
-                  <path d="M 45 51 Q 50 46, 55 51" stroke="#dc2626" strokeWidth="3" fill="none" markerEnd="url(#arrowhead)" />
-                )}
-                {selectedBreed === 'e' && (
-                  <path d="M 45 63 Q 50 58, 55 63" stroke="#dc2626" strokeWidth="3" fill="none" markerEnd="url(#arrowhead)" />
-                )}
-                {selectedBreed === 'f' && (
-                  <path d="M 45 75 Q 50 70, 55 75" stroke="#dc2626" strokeWidth="3" fill="none" markerEnd="url(#arrowhead)" />
-                )}
+                {selectedBreed === 'a' && <line x1="48%" y1="18%" x2="52%" y2="18%" stroke="#dc2626" strokeWidth="3" markerEnd="url(#arrowhead)" />}
+                {selectedBreed === 'b' && <line x1="48%" y1="30%" x2="52%" y2="30%" stroke="#dc2626" strokeWidth="3" markerEnd="url(#arrowhead)" />}
+                {selectedBreed === 'c' && <line x1="48%" y1="42%" x2="52%" y2="42%" stroke="#dc2626" strokeWidth="3" markerEnd="url(#arrowhead)" />}
+                {selectedBreed === 'd' && <line x1="48%" y1="54%" x2="52%" y2="54%" stroke="#dc2626" strokeWidth="3" markerEnd="url(#arrowhead)" />}
+                {selectedBreed === 'e' && <line x1="48%" y1="66%" x2="52%" y2="66%" stroke="#dc2626" strokeWidth="3" markerEnd="url(#arrowhead)" />}
+                {selectedBreed === 'f' && <line x1="48%" y1="78%" x2="52%" y2="78%" stroke="#dc2626" strokeWidth="3" markerEnd="url(#arrowhead)" />}
               </svg>
             </div>
 
