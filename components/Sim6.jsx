@@ -179,7 +179,7 @@ export default function Sim6() {
               함수 매핑 다이어그램
             </h2>
 
-            {/* ✅ 수정: 박스 크기 통일 & 직선 화살표 */}
+            {/* ✅ 수정: 정의역 박스를 치역 박스와 완전히 동일하게 */}
             <div style={{ position: 'relative', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(2rem, 4vw, 3rem)' }}>
               <div>
                 <div style={{ background: 'linear-gradient(135deg, #dbeafe, #bfdbfe)', borderRadius: '0.75rem', padding: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '1rem', textAlign: 'center', border: '2px solid #3b82f6' }}>
@@ -187,7 +187,7 @@ export default function Sim6() {
                   <p style={{ fontSize: 'clamp(0.75rem, 1.8vw, 0.875rem)', color: '#1e40af', margin: 0 }}>입력값 X</p>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(0.5rem, 1.5vw, 0.75rem)' }}>
-                  {Object.keys(breedData).map((key) => (
+                  {Object.entries(breedData).map(([key, breed]) => (
                     <div
                       key={key}
                       style={{
@@ -197,7 +197,6 @@ export default function Sim6() {
                         borderColor: selectedBreed === key ? '#3b82f6' : '#bfdbfe',
                         background: selectedBreed === key ? '#3b82f6' : '#eff6ff',
                         color: selectedBreed === key ? 'white' : '#1e40af',
-                        textAlign: 'center',
                         transition: 'all 0.3s',
                         transform: selectedBreed === key ? 'scale(1.05)' : 'scale(1)',
                         boxShadow: selectedBreed === key ? '0 4px 6px rgba(0,0,0,0.1)' : 'none',
@@ -207,7 +206,10 @@ export default function Sim6() {
                         justifyContent: 'center'
                       }}
                     >
-                      <p style={{ fontWeight: '700', fontSize: 'clamp(1.5rem, 4vw, 2rem)', margin: 0 }}>{key.toUpperCase()}</p>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'center' }}>
+                        <span style={{ fontSize: 'clamp(1.25rem, 3vw, 1.5rem)' }}>{breed.emoji}</span>
+                        <p style={{ fontWeight: '700', fontSize: 'clamp(1.5rem, 4vw, 2rem)', margin: 0 }}>{key.toUpperCase()}</p>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -247,7 +249,7 @@ export default function Sim6() {
                 </div>
               </div>
 
-              {/* ✅ 직선 화살표 */}
+              {/* 직선 화살표 */}
               <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
                 <defs>
                   <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">

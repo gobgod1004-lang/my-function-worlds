@@ -103,7 +103,7 @@ export default function SimulationSelection() {
     <div style={{ minHeight: '100vh', background: 'linear-gradient(to bottom right, #dbeafe, #e9d5ff, #fce7f3)', padding: 'clamp(2rem, 4vw, 3rem) 1rem', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
         {/* 헤더 */}
-        <div style={{ textAlign: 'center', marginBottom: 'clamp(3rem, 6vw, 4rem)' }}>
+        <div style={{ textAlign: 'center', marginBottom: 'clamp(2rem, 4vw, 3rem)' }}>
           <h1 style={{ fontSize: 'clamp(2.5rem, 8vw, 3.75rem)', fontWeight: '700', color: '#1f2937', marginBottom: '1rem' }}>
             일상 속 함수 탐험하기 🔬
           </h1>
@@ -115,8 +115,35 @@ export default function SimulationSelection() {
           </p>
         </div>
 
-        {/* 카드 그리드 */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 'clamp(1.5rem, 3vw, 2rem)', marginBottom: 'clamp(3rem, 6vw, 4rem)' }}>
+        {/* ✅ 프로젝트 개요 */}
+        <div style={{ background: 'white', borderRadius: '1.5rem', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', padding: 'clamp(1.5rem, 3vw, 2rem)', marginBottom: 'clamp(2rem, 4vw, 3rem)' }}>
+          <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', fontWeight: '700', color: '#1f2937', marginBottom: '1rem', textAlign: 'center' }}>
+            📌 프로젝트 개요
+          </h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', color: '#374151', fontSize: 'clamp(0.875rem, 2vw, 1rem)', lineHeight: '1.6' }}>
+            <p style={{ margin: 0 }}>
+              <strong style={{ color: '#a855f7' }}>함수는 입력값에 따라 출력값이 결정되는 규칙적인 관계</strong>를 뜻합니다. 
+              우리가 살아가는 현실 속 대부분의 변화는 함수로 표현할 수 있어요.
+            </p>
+            <p style={{ margin: 0 }}>
+              이 프로젝트는 일상생활의 다양한 현상을 <strong style={{ color: '#a855f7' }}>수학 함수로 시각화</strong>하고, 
+              사용자가 직접 변수를 조절하며 <strong style={{ color: '#a855f7' }}>입력(x)과 출력(y)의 관계</strong>를 실시간으로 탐구할 수 있는 인터랙티브 웹사이트입니다.
+            </p>
+            <p style={{ margin: 0 }}>
+              <strong style={{ color: '#a855f7' }}>Next.js와 React</strong>로 제작되었으며, 
+              <strong style={{ color: '#a855f7' }}> Recharts 라이브러리</strong>를 활용해 그래프를 실시간으로 시각화합니다. 
+              라면 조리부터 세포막 이동까지, 수학은 단순한 공식이 아닌 <strong style={{ color: '#a855f7' }}>세상의 규칙을 표현하는 도구</strong>임을 체험해보세요!
+            </p>
+          </div>
+        </div>
+
+        {/* ✅ 카드 그리드 - 3x2로 변경 */}
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
+          gap: 'clamp(1.5rem, 3vw, 2rem)', 
+          marginBottom: 'clamp(3rem, 6vw, 4rem)' 
+        }}>
           {simulations.map((sim) => (
             <div
               key={sim.id}
@@ -208,13 +235,14 @@ export default function SimulationSelection() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(1.5rem, 3vw, 2rem)' }}>
           <div style={{ background: 'white', borderRadius: '1.5rem', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', padding: 'clamp(2rem, 4vw, 3rem)', maxWidth: '1000px', margin: '0 auto', width: '100%' }}>
             <h2 style={{ fontSize: 'clamp(1.875rem, 5vw, 2.25rem)', fontWeight: '700', color: '#1f2937', marginBottom: '1rem', textAlign: 'center' }}>
-              🌟 프로젝트 소개
+              🌟 학습 특징
             </h2>
             <p style={{ color: '#6b7280', lineHeight: '1.6', marginBottom: '1rem', fontSize: 'clamp(0.875rem, 2vw, 1rem)', textAlign: 'center' }}>
-              일상생활의 다양한 현상을 <strong style={{ color: '#a855f7' }}>함수</strong>로 표현하고, 직접 조작하며 입력(x)과 출력(y)의 관계를 탐구해보세요.
+              슬라이더로 값을 조절하면 JavaScript의 Math 함수가 즉시 계산하고, 
+              그래프가 실시간으로 업데이트되어 함수의 형태가 시각화됩니다.
             </p>
             <p style={{ color: '#6b7280', lineHeight: '1.6', fontSize: 'clamp(0.875rem, 2vw, 1rem)', textAlign: 'center' }}>
-              라면 조리 시간부터 세포막 이동까지, 수학은 단순한 공식이 아닌 <strong style={{ color: '#a855f7' }}>세상의 규칙을 표현하는 도구</strong>예요!
+              단순한 계산기가 아닌, <strong style={{ color: '#a855f7' }}>살아 있는 함수 체험 공간</strong>을 경험해보세요!
             </p>
           </div>
 
@@ -253,6 +281,12 @@ export default function SimulationSelection() {
           }
           50% {
             transform: translateY(-20px);
+          }
+        }
+
+        @media (min-width: 1024px) {
+          [style*="gridTemplateColumns"] {
+            grid-template-columns: repeat(3, 1fr) !important;
           }
         }
       `}</style>
