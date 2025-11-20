@@ -85,17 +85,18 @@ export default function Sim6() {
           </p>
         </div>
 
+        {/* ✅ 수정: 동물 이름 제거, A~F만 표시 */}
         <div style={{ background: 'white', borderRadius: '1.5rem', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', padding: 'clamp(1.5rem, 3vw, 2rem)', marginBottom: 'clamp(1.5rem, 3vw, 2rem)' }}>
           <h2 style={{ fontSize: 'clamp(1.25rem, 3vw, 1.5rem)', fontWeight: '700', color: '#1f2937', marginBottom: '1rem', textAlign: 'center' }}>
             견종 선택
           </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)' }}>
             {Object.entries(breedData).map(([key, breed]) => (
               <button
                 key={key}
                 onClick={() => setSelectedBreed(key)}
                 style={{
-                  padding: 'clamp(0.75rem, 2vw, 1rem)',
+                  padding: 'clamp(1rem, 2.5vw, 1.5rem)',
                   borderRadius: '0.75rem',
                   border: selectedBreed === key ? `4px solid ${breed.color}` : '4px solid #e5e7eb',
                   background: selectedBreed === key ? breed.bgGradient : '#f9fafb',
@@ -118,15 +119,13 @@ export default function Sim6() {
                   }
                 }}
               >
-                <div style={{ fontSize: 'clamp(2rem, 5vw, 2.5rem)', marginBottom: '0.5rem' }}>{breed.emoji}</div>
-                <p style={{ fontWeight: '700', fontSize: 'clamp(0.75rem, 1.8vw, 0.875rem)', color: '#1f2937', marginBottom: '0.25rem' }}>{breed.name}</p>
-                <p style={{ fontSize: 'clamp(0.625rem, 1.5vw, 0.75rem)', color: '#6b7280' }}>({key.toUpperCase()})</p>
+                <div style={{ fontSize: 'clamp(2.5rem, 6vw, 3.5rem)', marginBottom: '0.5rem' }}>{breed.emoji}</div>
+                <p style={{ fontWeight: '700', fontSize: 'clamp(1.25rem, 3vw, 1.75rem)', color: '#1f2937', margin: 0 }}>{key.toUpperCase()}</p>
               </button>
             ))}
           </div>
         </div>
 
-        {/* ✅ 수정: gridTemplateColumns 반응형 처리 */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 'clamp(1.5rem, 3vw, 2rem)' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(1.5rem, 3vw, 2rem)' }}>
             <div style={{ background: currentBreed.bgGradient, borderRadius: '1.5rem', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', padding: 'clamp(2rem, 4vw, 3rem)', textAlign: 'center', border: `4px solid ${currentBreed.color}` }}>
@@ -240,18 +239,31 @@ export default function Sim6() {
                 </div>
               </div>
 
+              {/* ✅ 수정: 곡선 화살표로 변경 */}
               <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
                 <defs>
                   <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
                     <polygon points="0 0, 10 3, 0 6" fill="#dc2626" />
                   </marker>
                 </defs>
-                {selectedBreed === 'a' && <line x1="45%" y1="15%" x2="55%" y2="15%" stroke="#dc2626" strokeWidth="3" markerEnd="url(#arrowhead)" />}
-                {selectedBreed === 'b' && <line x1="45%" y1="27%" x2="55%" y2="27%" stroke="#dc2626" strokeWidth="3" markerEnd="url(#arrowhead)" />}
-                {selectedBreed === 'c' && <line x1="45%" y1="39%" x2="55%" y2="39%" stroke="#dc2626" strokeWidth="3" markerEnd="url(#arrowhead)" />}
-                {selectedBreed === 'd' && <line x1="45%" y1="51%" x2="55%" y2="51%" stroke="#dc2626" strokeWidth="3" markerEnd="url(#arrowhead)" />}
-                {selectedBreed === 'e' && <line x1="45%" y1="63%" x2="55%" y2="63%" stroke="#dc2626" strokeWidth="3" markerEnd="url(#arrowhead)" />}
-                {selectedBreed === 'f' && <line x1="45%" y1="75%" x2="55%" y2="75%" stroke="#dc2626" strokeWidth="3" markerEnd="url(#arrowhead)" />}
+                {selectedBreed === 'a' && (
+                  <path d="M 45 15 Q 50 10, 55 15" stroke="#dc2626" strokeWidth="3" fill="none" markerEnd="url(#arrowhead)" />
+                )}
+                {selectedBreed === 'b' && (
+                  <path d="M 45 27 Q 50 22, 55 27" stroke="#dc2626" strokeWidth="3" fill="none" markerEnd="url(#arrowhead)" />
+                )}
+                {selectedBreed === 'c' && (
+                  <path d="M 45 39 Q 50 34, 55 39" stroke="#dc2626" strokeWidth="3" fill="none" markerEnd="url(#arrowhead)" />
+                )}
+                {selectedBreed === 'd' && (
+                  <path d="M 45 51 Q 50 46, 55 51" stroke="#dc2626" strokeWidth="3" fill="none" markerEnd="url(#arrowhead)" />
+                )}
+                {selectedBreed === 'e' && (
+                  <path d="M 45 63 Q 50 58, 55 63" stroke="#dc2626" strokeWidth="3" fill="none" markerEnd="url(#arrowhead)" />
+                )}
+                {selectedBreed === 'f' && (
+                  <path d="M 45 75 Q 50 70, 55 75" stroke="#dc2626" strokeWidth="3" fill="none" markerEnd="url(#arrowhead)" />
+                )}
               </svg>
             </div>
 
