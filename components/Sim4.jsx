@@ -13,7 +13,6 @@ export default function Sim4() {
   const [initialOutside, setInitialOutside] = useState(5);
   const [movingParticles, setMovingParticles] = useState([]);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [speedMultiplier, setSpeedMultiplier] = useState(1);
 
   const modes = {
     oxygen: {
@@ -59,7 +58,6 @@ export default function Sim4() {
     if (!mode || !isAnimating || isEquilibrium) return;
 
     const baseInterval = Math.max(200, 1000 / Math.max(0.3, Math.abs(velocity)));
-    const intervalTime = baseInterval / speedMultiplier;
     
     const interval = setInterval(() => {
       const isInward = velocity > 0;
@@ -67,26 +65,24 @@ export default function Sim4() {
       if (isInward && outsideConc > finalEquilibrium) {
         const newParticle = { id: Date.now() + Math.random(), direction: 'down' };
         setMovingParticles(prev => [...prev, newParticle]);
-        const animDuration = 1200 / speedMultiplier;
         setTimeout(() => {
           setOutsideConc(prev => Math.max(finalEquilibrium, prev - 0.5));
           setInsideConc(prev => Math.min(finalEquilibrium, prev + 0.5));
           setMovingParticles(prev => prev.filter(p => p.id !== newParticle.id));
-        }, animDuration);
+        }, 1200);
       } else if (!isInward && insideConc > finalEquilibrium) {
         const newParticle = { id: Date.now() + Math.random(), direction: 'up' };
         setMovingParticles(prev => [...prev, newParticle]);
-        const animDuration = 1200 / speedMultiplier;
         setTimeout(() => {
           setInsideConc(prev => Math.max(finalEquilibrium, prev - 0.5));
           setOutsideConc(prev => Math.min(finalEquilibrium, prev + 0.5));
           setMovingParticles(prev => prev.filter(p => p.id !== newParticle.id));
-        }, animDuration);
+        }, 1200);
       }
-    }, intervalTime);
+    }, baseInterval);
 
     return () => clearInterval(interval);
-  }, [mode, outsideConc, insideConc, velocity, isAnimating, isEquilibrium, finalEquilibrium, speedMultiplier]);
+  }, [mode, outsideConc, insideConc, velocity, isAnimating, isEquilibrium, finalEquilibrium]);
 
   const animations = `
     @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
@@ -123,6 +119,15 @@ export default function Sim4() {
       50% { transform: scale(1.1); box-shadow: 0 0 25px rgba(22,163,74,0.8); }
     }
   `;
+
+  // ✅ 처음부터 다시 함수
+  const handleRestart = () => {
+    setIsAnimating(false);
+    setOutsideConc(initialOutside);
+    setInsideConc(5);
+    setMovingParticles([]);
+    setTimeout(() => setIsAnimating(true), 100);
+  };
 
   if (step === 'mode') {
     return (
@@ -252,40 +257,25 @@ export default function Sim4() {
     <div style={{ minHeight: '100vh', background: 'linear-gradient(to bottom right, #faf5ff, #fce7f3)', padding: 'clamp(1rem, 2vw, 3rem)', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
       <style>{animations}</style>
       <div style={{ maxWidth: '1600px', margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+        <div style={{ textAlign: 'center', marginBottom: '2rem', position: 'relative' }}>
+          <button onClick={() => router.push('/')}
+            style={{ position: 'absolute', left: 0, top: 0, padding: '0.75rem 1.5rem', background: '#6b7280', color: 'white', borderRadius: '9999px', fontWeight: '700', fontSize: 'clamp(0.875rem, 2vw, 1rem)', border: 'none', cursor: 'pointer', boxShadow: '0 10px 15px rgba(0,0,0,0.1)', transition: 'all 0.3s' }}
+            onMouseEnter={e => { e.currentTarget.style.background = '#4b5563'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = '#6b7280'; }}>
+            ← 메인으로
+          </button>
           <div style={{ display: 'inline-block', background: 'white', borderRadius: '0.75rem', padding: 'clamp(1rem, 2vw, 1.5rem) clamp(1.5rem, 3vw, 2rem)', boxShadow: '0 10px 15px rgba(0,0,0,0.1)' }}>
             <span style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', marginRight: '0.75rem' }}>{currentMode.icon}</span>
             <span style={{ fontSize: 'clamp(1.25rem, 3vw, 2rem)', fontWeight: '700', color: '#333' }}>{currentMode.name}</span>
           </div>
         </div>
 
-        {/* ✅ 수정: gridTemplateColumns 반응형 처리 */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
           <div style={{ background: 'white', borderRadius: '1rem', padding: 'clamp(1rem, 2vw, 1.5rem)', boxShadow: '0 25px 50px rgba(0,0,0,0.25)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
               <h3 style={{ fontSize: 'clamp(1.125rem, 2.5vw, 1.375rem)', fontWeight: '700', margin: 0 }}>🔬 세포막</h3>
               <div style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', fontWeight: '700', color: velocity > 0 ? '#22c55e' : velocity < 0 ? '#ef4444' : '#6b7280' }}>
                 속도: {velocity.toFixed(2)} μmol/min {velocity > 0 ? '→ 안으로' : velocity < 0 ? '→ 밖으로' : '⚖️'}
-              </div>
-            </div>
-
-            <div style={{ background: '#f9fafb', borderRadius: '0.75rem', padding: '1rem', marginBottom: '1rem', border: '2px solid #e5e7eb' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                <label style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', fontWeight: '700', color: '#374151' }}>⚡ 애니메이션 속도</label>
-                <span style={{ fontSize: 'clamp(1rem, 2.5vw, 1.25rem)', fontWeight: '700', color: '#a855f7' }}>{speedMultiplier.toFixed(1)}x</span>
-              </div>
-              <input 
-                type="range" 
-                min="0.5" 
-                max="3" 
-                step="0.5" 
-                value={speedMultiplier} 
-                onChange={(e) => setSpeedMultiplier(parseFloat(e.target.value))}
-                style={{ width: '100%', accentColor: '#a855f7' }}
-              />
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'clamp(0.7rem, 1.5vw, 0.875rem)', color: '#6b7280', marginTop: '0.25rem' }}>
-                <span>느림 (0.5x)</span>
-                <span>빠름 (3x)</span>
               </div>
             </div>
 
@@ -338,7 +328,6 @@ export default function Sim4() {
               </div>
 
               {movingParticles.map(p => {
-                const animDuration = `${1.2 / speedMultiplier}s`;
                 const useCarrier = currentMode.hasProtein === 'carrier';
                 const animName = useCarrier 
                   ? (p.direction === 'down' ? 'moveDownCarrier' : 'moveUpCarrier')
@@ -350,7 +339,7 @@ export default function Sim4() {
                     left: '50%', 
                     fontSize: 'clamp(1.5rem, 3vw, 2rem)', 
                     zIndex: 25, 
-                    animation: `${animName} ${animDuration} ease-in-out forwards`,
+                    animation: `${animName} 1.2s ease-in-out forwards`,
                     top: p.direction === 'down' ? '20%' : '75%'
                   }}>
                     {currentMode.molecule}
@@ -364,7 +353,7 @@ export default function Sim4() {
                     <div style={{ fontSize: 'clamp(3rem, 8vw, 5rem)', marginBottom: '1rem' }}>⚖️</div>
                     <h3 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', fontWeight: '700', color: '#22c55e', marginBottom: '0.5rem' }}>평형 상태!</h3>
                     <p style={{ fontSize: 'clamp(1rem, 2.5vw, 1.25rem)', color: '#666', marginBottom: '1rem' }}>{outsideConc.toFixed(1)} mM = {insideConc.toFixed(1)} mM</p>
-                    <button onClick={() => { setIsAnimating(false); setOutsideConc(5); setInsideConc(5); setStep('concentration'); setMovingParticles([]); setSpeedMultiplier(1); }}
+                    <button onClick={handleRestart}
                       style={{ padding: 'clamp(0.75rem, 2vw, 1rem) clamp(1.5rem, 3vw, 2rem)', background: '#a855f7', color: 'white', borderRadius: '9999px', fontWeight: '700', fontSize: 'clamp(1rem, 2.5vw, 1.125rem)', border: 'none', cursor: 'pointer', boxShadow: '0 10px 15px rgba(0,0,0,0.1)', transition: 'all 0.3s' }}
                       onMouseEnter={e => { e.currentTarget.style.background = '#9333ea'; }}
                       onMouseLeave={e => { e.currentTarget.style.background = '#a855f7'; }}>
@@ -376,7 +365,7 @@ export default function Sim4() {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '1rem', marginTop: '1rem' }}>
-              <button onClick={() => { setIsAnimating(false); setOutsideConc(5); setInsideConc(5); setStep('concentration'); setMovingParticles([]); setSpeedMultiplier(1); }}
+              <button onClick={() => { setIsAnimating(false); setOutsideConc(5); setInsideConc(5); setStep('concentration'); setMovingParticles([]); }}
                 style={{ padding: 'clamp(0.75rem, 1.5vw, 1rem)', background: '#6b7280', color: 'white', borderRadius: '9999px', fontWeight: '700', fontSize: 'clamp(0.875rem, 2vw, 1rem)', border: 'none', cursor: 'pointer', boxShadow: '0 10px 15px rgba(0,0,0,0.1)', transition: 'all 0.3s' }}
                 onMouseEnter={e => { e.currentTarget.style.background = '#4b5563'; }}
                 onMouseLeave={e => { e.currentTarget.style.background = '#6b7280'; }}>
@@ -411,6 +400,17 @@ export default function Sim4() {
               </p>
             </div>
           </div>
+        </div>
+
+        <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+          <button 
+            onClick={() => router.push('/')}
+            style={{ padding: '0.75rem 2rem', background: 'white', color: '#374151', borderRadius: '9999px', boxShadow: '0 10px 15px rgba(0,0,0,0.1)', transition: 'all 0.3s', fontWeight: '600', border: 'none', cursor: 'pointer', fontSize: 'clamp(1rem, 2.5vw, 1.125rem)' }}
+            onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 20px 25px rgba(0,0,0,0.15)'; }}
+            onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 10px 15px rgba(0,0,0,0.1)'; }}
+          >
+            ← 돌아가기
+          </button>
         </div>
       </div>
     </div>

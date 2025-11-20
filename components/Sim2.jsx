@@ -164,14 +164,14 @@ export default function Sim2() {
               🧂 소금의 양과 짠맛 강도
             </h1>
             <p style={{ color: '#6b7280', fontSize: 'clamp(0.875rem, 2vw, 1rem)' }}>
-              소고기 무국에 소금을 넣어 간을 맞춰보세요
+              소고기뭇국에 소금을 넣어 간을 맞춰보세요
             </p>
           </div>
 
           <div style={{ background: 'white', borderRadius: '1.5rem', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', padding: 'clamp(2rem, 4vw, 3rem)' }}>
             <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
               <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', fontWeight: '700', color: '#1f2937', marginBottom: '1rem' }}>
-                소고기 무국
+                소고기뭇국
               </h2>
               <p style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', color: '#6b7280', marginBottom: '1.5rem' }}>
                 클릭해서 천일염을 한 꼬집(1g)씩 넣어주세요
@@ -346,7 +346,7 @@ export default function Sim2() {
                   <div style={{ background: '#f9fafb', borderRadius: '0.75rem', padding: 'clamp(1rem, 2vw, 1.5rem)', maxHeight: '400px', overflowY: 'auto' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(0.75rem, 2vw, 1rem)' }}>
                       {[
-                        { level: 1, emoji: '😰', title: '1단계 - 너무 싱거워요', bg: '#dbeafe', color: '#1e40af', mapping: '0g, 1g → 1단계' },
+                        { level: 1, emoji: '😰', title: '1단계 - 너무 밍밍해요. 맛 없어요.', bg: '#dbeafe', color: '#1e40af', mapping: '0g, 1g → 1단계' },
                         { level: 2, emoji: '😕', title: '2단계 - 많이 싱거워요', bg: '#dbeafe', color: '#1e40af', mapping: '2g, 3g → 2단계' },
                         { level: 3, emoji: '🙁', title: '3단계 - 조금 싱거워요', bg: '#cffafe', color: '#0e7490', mapping: '4g, 5g → 3단계' },
                         { level: 4, emoji: '🙂', title: '4단계 - 거의 적당해요', bg: '#fef3c7', color: '#92400e', mapping: '6g → 4단계' },
@@ -355,7 +355,7 @@ export default function Sim2() {
                         { level: 7, emoji: '😬', title: '7단계 - 조금 짜요', bg: '#fed7aa', color: '#9a3412', mapping: '10g, 11g → 7단계' },
                         { level: 8, emoji: '😣', title: '8단계 - 짜요', bg: '#fecaca', color: '#991b1b', mapping: '12g, 13g → 8단계' },
                         { level: 9, emoji: '😵', title: '9단계 - 많이 짜요', bg: '#fecaca', color: '#991b1b', mapping: '14g, 15g, 16g → 9단계' },
-                        { level: 10, emoji: '💀', title: '10단계 - 너무 짜서 먹기 힘들어요', bg: '#fecaca', color: '#991b1b', mapping: '17g ~ 25g → 10단계' }
+                        { level: 10, emoji: '💀', title: '10단계 - 웩, 너무 짜서 먹기 힘들어요', bg: '#fecaca', color: '#991b1b', mapping: '17g ~ 25g → 10단계' }
                       ].map(item => (
                         <div key={item.level} style={{ background: item.bg, borderRadius: '0.5rem', padding: 'clamp(0.5rem, 1.5vw, 0.75rem)', border: item.border || 'none' }}>
                           <div style={{ fontWeight: '700', fontSize: 'clamp(0.875rem, 2vw, 1rem)', color: item.color, marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>

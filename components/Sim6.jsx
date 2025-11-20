@@ -174,12 +174,12 @@ export default function Sim6() {
             </div>
           </div>
 
+          {/* ✅ 화살표 완전 제거 - SVG 삭제 */}
           <div style={{ background: 'white', borderRadius: '1.5rem', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', padding: 'clamp(1.5rem, 3vw, 2rem)' }}>
             <h2 style={{ fontSize: 'clamp(1.25rem, 3vw, 1.5rem)', fontWeight: '700', color: '#1f2937', marginBottom: '1.5rem', textAlign: 'center' }}>
               함수 매핑 다이어그램
             </h2>
 
-            {/* ✅ 수정: 정의역 박스를 치역 박스와 완전히 동일하게 */}
             <div style={{ position: 'relative', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(2rem, 4vw, 3rem)' }}>
               <div>
                 <div style={{ background: 'linear-gradient(135deg, #dbeafe, #bfdbfe)', borderRadius: '0.75rem', padding: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '1rem', textAlign: 'center', border: '2px solid #3b82f6' }}>
@@ -248,29 +248,11 @@ export default function Sim6() {
                   ))}
                 </div>
               </div>
-
-              {/* 직선 화살표 */}
-              <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
-                <defs>
-                  <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-                    <polygon points="0 0, 10 3, 0 6" fill="#dc2626" />
-                  </marker>
-                </defs>
-                {selectedBreed === 'a' && <line x1="48%" y1="18%" x2="52%" y2="18%" stroke="#dc2626" strokeWidth="3" markerEnd="url(#arrowhead)" />}
-                {selectedBreed === 'b' && <line x1="48%" y1="30%" x2="52%" y2="30%" stroke="#dc2626" strokeWidth="3" markerEnd="url(#arrowhead)" />}
-                {selectedBreed === 'c' && <line x1="48%" y1="42%" x2="52%" y2="42%" stroke="#dc2626" strokeWidth="3" markerEnd="url(#arrowhead)" />}
-                {selectedBreed === 'd' && <line x1="48%" y1="54%" x2="52%" y2="54%" stroke="#dc2626" strokeWidth="3" markerEnd="url(#arrowhead)" />}
-                {selectedBreed === 'e' && <line x1="48%" y1="66%" x2="52%" y2="66%" stroke="#dc2626" strokeWidth="3" markerEnd="url(#arrowhead)" />}
-                {selectedBreed === 'f' && <line x1="48%" y1="78%" x2="52%" y2="78%" stroke="#dc2626" strokeWidth="3" markerEnd="url(#arrowhead)" />}
-              </svg>
             </div>
 
             <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'linear-gradient(135deg, #fef3c7, #fde68a)', borderRadius: '0.75rem', border: '2px solid #f59e0b', textAlign: 'center' }}>
               <p style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', color: '#374151', margin: 0, lineHeight: '1.5' }}>
-                <span style={{ fontWeight: '700', color: '#dc2626' }}>빨간 화살표</span>가 현재 선택된 매핑을 나타내요
-              </p>
-              <p style={{ fontSize: 'clamp(0.75rem, 1.8vw, 0.875rem)', color: '#6b7280', marginTop: '0.5rem', margin: 0 }}>
-                {selectedBreed.toUpperCase()} → {currentBreed.name}
+                현재 선택: <span style={{ fontWeight: '700', color: '#dc2626' }}>{selectedBreed.toUpperCase()} → {currentBreed.name}</span>
               </p>
             </div>
           </div>

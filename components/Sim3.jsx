@@ -9,6 +9,7 @@ export default function Sim3() {
   const [draggedBase, setDraggedBase] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
+  const [showCodonTable, setShowCodonTable] = useState(false);
 
   const codonTable = {
     'UUU': { name: '페닐알라닌', abbr: 'Phe', desc: '신경전달물질 전구체로 뇌 기능과 기분 조절에 도움을 줘요.' },
@@ -126,7 +127,6 @@ export default function Sim3() {
           </p>
         </div>
 
-        {/* ✅ 수정: window 제거 */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 'clamp(1.5rem, 3vw, 2rem)' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(1.5rem, 3vw, 2rem)' }}>
             <div style={{ background: 'white', borderRadius: '1.5rem', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', padding: 'clamp(1.5rem, 3vw, 2rem)' }}>
@@ -207,7 +207,15 @@ export default function Sim3() {
               </div>
             </div>
 
-            <div style={{ textAlign: 'center' }}>
+            <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <button
+                onClick={() => setShowCodonTable(!showCodonTable)}
+                style={{ padding: 'clamp(0.75rem, 2vw, 1rem) clamp(1.5rem, 4vw, 2rem)', background: '#a855f7', color: 'white', borderRadius: '9999px', fontWeight: '700', fontSize: 'clamp(0.875rem, 2vw, 1rem)', border: 'none', cursor: 'pointer', boxShadow: '0 10px 15px rgba(0,0,0,0.1)', transition: 'all 0.3s' }}
+                onMouseEnter={e => { e.currentTarget.style.background = '#9333ea'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = '#a855f7'; }}
+              >
+                📖 {showCodonTable ? '코돈표 숨기기' : '코돈표 보기'}
+              </button>
               <button
                 onClick={() => setShowGuide(!showGuide)}
                 style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', color: '#6366f1', textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer', transition: 'color 0.3s' }}
@@ -219,7 +227,6 @@ export default function Sim3() {
             </div>
           </div>
 
-          {/* ✅ 수정: minHeight도 고정값으로 */}
           <div style={{ background: 'white', borderRadius: '1.5rem', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', padding: 'clamp(1.5rem, 3vw, 2rem)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '400px' }}>
             <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', fontWeight: '700', color: '#1f2937', marginBottom: '1.5rem' }}>결과</h2>
             <div style={{ background: resultStyle.bg, borderRadius: '0.75rem', padding: 'clamp(1.5rem, 3vw, 2rem)', width: '100%', textAlign: 'center', transition: 'all 0.3s', border: codon === 'AUG' ? '3px solid #a855f7' : result?.abbr === 'STOP' ? '3px solid #dc2626' : 'none' }}>
@@ -260,6 +267,60 @@ export default function Sim3() {
             )}
           </div>
         </div>
+
+        {/* ✅ 코돈표 추가 */}
+        {showCodonTable && (
+          <div style={{ marginTop: 'clamp(2rem, 4vw, 3rem)', background: 'white', borderRadius: '1.5rem', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', padding: 'clamp(1.5rem, 3vw, 2rem)' }}>
+            <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', fontWeight: '700', color: '#1f2937', marginBottom: '1rem', textAlign: 'center' }}>
+              📊 코돈표
+            </h2>
+            <p style={{ textAlign: 'center', color: '#6b7280', fontSize: 'clamp(0.875rem, 2vw, 1rem)', marginBottom: '1.5rem' }}>
+              정의역(64가지 코돈) → 치역(20가지 아미노산 + 종결 신호)
+            </p>
+            
+            <div style={{ overflowX: 'auto' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '0.5rem', minWidth: '600px' }}>
+                {Object.entries(codonTable).map(([key, value]) => (
+                  <div
+                    key={key}
+                    style={{
+                      padding: 'clamp(0.5rem, 1.5vw, 0.75rem)',
+                      borderRadius: '0.5rem',
+                      background: value.abbr === 'STOP' ? 'linear-gradient(135deg, #fee2e2, #fecaca)' : key === 'AUG' ? 'linear-gradient(135deg, #f3e8ff, #e9d5ff)' : 'linear-gradient(135deg, #f0fdf4, #dcfce7)',
+                      border: value.abbr === 'STOP' ? '2px solid #dc2626' : key === 'AUG' ? '2px solid #a855f7' : '2px solid #22c55e',
+                      textAlign: 'center',
+                      transition: 'all 0.3s'
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.05)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; }}
+                  >
+                    <p style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', fontWeight: '700', color: value.abbr === 'STOP' ? '#991b1b' : key === 'AUG' ? '#6b21a8' : '#15803d', margin: '0 0 0.25rem 0' }}>
+                      {key}
+                    </p>
+                    <p style={{ fontSize: 'clamp(0.7rem, 1.5vw, 0.8rem)', color: value.abbr === 'STOP' ? '#dc2626' : key === 'AUG' ? '#9333ea' : '#16a34a', margin: 0 }}>
+                      {value.name}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ marginTop: '1.5rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+              <div style={{ background: 'linear-gradient(135deg, #dbeafe, #bfdbfe)', borderRadius: '0.75rem', padding: '1rem', border: '2px solid #3b82f6' }}>
+                <p style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', fontWeight: '700', color: '#1e40af', marginBottom: '0.5rem' }}>📥 정의역 (Domain)</p>
+                <p style={{ fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)', color: '#1e40af', margin: 0 }}>
+                  64가지 코돈 (UUU, UUC, ...)
+                </p>
+              </div>
+              <div style={{ background: 'linear-gradient(135deg, #d1fae5, #a7f3d0)', borderRadius: '0.75rem', padding: '1rem', border: '2px solid #22c55e' }}>
+                <p style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', fontWeight: '700', color: '#15803d', marginBottom: '0.5rem' }}>📤 치역 (Range)</p>
+                <p style={{ fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)', color: '#15803d', margin: 0 }}>
+                  20가지 아미노산 + 종결 신호
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div style={{ marginTop: 'clamp(2rem, 4vw, 3rem)', textAlign: 'center' }}>
           <button
