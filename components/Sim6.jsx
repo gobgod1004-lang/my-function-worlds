@@ -8,7 +8,6 @@ export default function Sim6() {
   const [selectedBreed, setSelectedBreed] = useState('a');
   const [showGuide, setShowGuide] = useState(false);
 
-  // 견종 데이터 매핑
   const breedData = {
     a: { 
       name: '비숑 프리제', 
@@ -71,7 +70,6 @@ export default function Sim6() {
   return (
     <div style={{ minHeight: '100vh', background: 'linear-gradient(to bottom right, #e0e7ff, #fce7f3)', padding: 'clamp(2rem, 4vw, 3rem) 1rem', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-        {/* 헤더 */}
         <div style={{ textAlign: 'center', marginBottom: '2rem', position: 'relative' }}>
           <button onClick={() => router.push('/')}
             style={{ position: 'absolute', left: 0, top: 0, padding: '0.75rem 1.5rem', background: '#6b7280', color: 'white', borderRadius: '9999px', fontWeight: '700', fontSize: 'clamp(0.875rem, 2vw, 1rem)', border: 'none', cursor: 'pointer', boxShadow: '0 10px 15px rgba(0,0,0,0.1)', transition: 'all 0.3s' }}
@@ -87,7 +85,6 @@ export default function Sim6() {
           </p>
         </div>
 
-        {/* 견종 선택 */}
         <div style={{ background: 'white', borderRadius: '1.5rem', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', padding: 'clamp(1.5rem, 3vw, 2rem)', marginBottom: 'clamp(1.5rem, 3vw, 2rem)' }}>
           <h2 style={{ fontSize: 'clamp(1.25rem, 3vw, 1.5rem)', fontWeight: '700', color: '#1f2937', marginBottom: '1rem', textAlign: 'center' }}>
             견종 선택
@@ -129,8 +126,8 @@ export default function Sim6() {
           </div>
         </div>
 
+        {/* ✅ 수정: gridTemplateColumns 반응형 처리 */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 'clamp(1.5rem, 3vw, 2rem)' }}>
-          {/* 왼쪽: 선택된 견종 정보 */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(1.5rem, 3vw, 2rem)' }}>
             <div style={{ background: currentBreed.bgGradient, borderRadius: '1.5rem', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', padding: 'clamp(2rem, 4vw, 3rem)', textAlign: 'center', border: `4px solid ${currentBreed.color}` }}>
               <div style={{ fontSize: 'clamp(5rem, 15vw, 8rem)', marginBottom: '1rem' }}>{currentBreed.emoji}</div>
@@ -141,7 +138,6 @@ export default function Sim6() {
                 {currentBreed.desc}
               </p>
               
-              {/* 운동량 정보 */}
               <div style={{ background: 'rgba(255, 255, 255, 0.9)', borderRadius: '0.75rem', padding: 'clamp(1rem, 2vw, 1.5rem)', marginTop: '1rem' }}>
                 <div style={{ marginBottom: '1rem' }}>
                   <p style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', color: '#6b7280', marginBottom: '0.25rem' }}>하루 권장 운동 시간</p>
@@ -157,7 +153,6 @@ export default function Sim6() {
               </div>
             </div>
 
-            {/* 가이드 토글 */}
             <div style={{ textAlign: 'center' }}>
               <button
                 onClick={() => setShowGuide(!showGuide)}
@@ -181,14 +176,12 @@ export default function Sim6() {
             </div>
           </div>
 
-          {/* 오른쪽: 함수 매핑 다이어그램 */}
           <div style={{ background: 'white', borderRadius: '1.5rem', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', padding: 'clamp(1.5rem, 3vw, 2rem)' }}>
             <h2 style={{ fontSize: 'clamp(1.25rem, 3vw, 1.5rem)', fontWeight: '700', color: '#1f2937', marginBottom: '1.5rem', textAlign: 'center' }}>
               함수 매핑 다이어그램
             </h2>
 
             <div style={{ position: 'relative', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(2rem, 4vw, 3rem)' }}>
-              {/* 정의역 */}
               <div>
                 <div style={{ background: 'linear-gradient(135deg, #dbeafe, #bfdbfe)', borderRadius: '0.75rem', padding: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '1rem', textAlign: 'center', border: '2px solid #3b82f6' }}>
                   <h3 style={{ fontWeight: '700', color: '#1e40af', fontSize: 'clamp(1rem, 2.5vw, 1.125rem)', marginBottom: '0.25rem' }}>정의역 (Domain)</h3>
@@ -217,7 +210,6 @@ export default function Sim6() {
                 </div>
               </div>
 
-              {/* 공역/치역 */}
               <div>
                 <div style={{ background: 'linear-gradient(135deg, #d1fae5, #a7f3d0)', borderRadius: '0.75rem', padding: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '1rem', textAlign: 'center', border: '2px solid #22c55e' }}>
                   <h3 style={{ fontWeight: '700', color: '#15803d', fontSize: 'clamp(1rem, 2.5vw, 1.125rem)', marginBottom: '0.25rem' }}>공역/치역</h3>
@@ -248,7 +240,6 @@ export default function Sim6() {
                 </div>
               </div>
 
-              {/* 화살표 SVG */}
               <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
                 <defs>
                   <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
@@ -275,7 +266,6 @@ export default function Sim6() {
           </div>
         </div>
 
-        {/* 설명 패널 */}
         {showGuide && (
           <div style={{ marginTop: 'clamp(1.5rem, 3vw, 2rem)', background: 'white', borderRadius: '1.5rem', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', padding: 'clamp(1.5rem, 3vw, 2rem)' }}>
             <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', fontWeight: '700', color: '#1f2937', marginBottom: '1.5rem', textAlign: 'center' }}>
@@ -310,7 +300,6 @@ export default function Sim6() {
           </div>
         )}
 
-        {/* 돌아가기 버튼 */}
         <div style={{ marginTop: 'clamp(2rem, 4vw, 3rem)', textAlign: 'center' }}>
           <button
             onClick={() => router.push('/')}

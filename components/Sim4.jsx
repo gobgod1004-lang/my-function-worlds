@@ -13,7 +13,7 @@ export default function Sim4() {
   const [initialOutside, setInitialOutside] = useState(5);
   const [movingParticles, setMovingParticles] = useState([]);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [speedMultiplier, setSpeedMultiplier] = useState(1); // 속도 배율
+  const [speedMultiplier, setSpeedMultiplier] = useState(1);
 
   const modes = {
     oxygen: {
@@ -58,7 +58,6 @@ export default function Sim4() {
   useEffect(() => {
     if (!mode || !isAnimating || isEquilibrium) return;
 
-    // 속도에 따라 간격 조절 - speedMultiplier 적용
     const baseInterval = Math.max(200, 1000 / Math.max(0.3, Math.abs(velocity)));
     const intervalTime = baseInterval / speedMultiplier;
     
@@ -260,8 +259,8 @@ export default function Sim4() {
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth > 1024 ? '2fr 1fr' : '1fr', gap: '1.5rem' }}>
-          {/* 세포막 */}
+        {/* ✅ 수정: gridTemplateColumns 반응형 처리 */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
           <div style={{ background: 'white', borderRadius: '1rem', padding: 'clamp(1rem, 2vw, 1.5rem)', boxShadow: '0 25px 50px rgba(0,0,0,0.25)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
               <h3 style={{ fontSize: 'clamp(1.125rem, 2.5vw, 1.375rem)', fontWeight: '700', margin: 0 }}>🔬 세포막</h3>
@@ -270,7 +269,6 @@ export default function Sim4() {
               </div>
             </div>
 
-            {/* 속도 조절 슬라이더 */}
             <div style={{ background: '#f9fafb', borderRadius: '0.75rem', padding: '1rem', marginBottom: '1rem', border: '2px solid #e5e7eb' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
                 <label style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', fontWeight: '700', color: '#374151' }}>⚡ 애니메이션 속도</label>
@@ -292,7 +290,6 @@ export default function Sim4() {
             </div>
 
             <div style={{ position: 'relative', height: 'clamp(400px, 50vw, 600px)', borderRadius: '0.75rem', border: '3px solid #a855f7', overflow: 'hidden' }}>
-              {/* 세포 밖 */}
               <div style={{ position: 'absolute', top: 0, width: '100%', height: '40%', background: 'linear-gradient(to bottom, #bfdbfe, #93c5fd, #dbeafe)' }}>
                 <div style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', background: 'rgba(255,255,255,0.95)', borderRadius: '0.5rem', padding: '0.5rem 0.75rem', border: '2px solid #60a5fa', zIndex: 10 }}>
                   <p style={{ fontSize: 'clamp(0.7rem, 1.5vw, 0.875rem)', fontWeight: '700', color: '#1e40af', margin: 0 }}>🌊 세포 밖</p>
@@ -305,7 +302,6 @@ export default function Sim4() {
                 </div>
               </div>
 
-              {/* 인지질 이중층 */}
               <div style={{ position: 'absolute', top: '45%', width: '100%', height: '10%', background: 'linear-gradient(to right, #fbbf24, #f59e0b, #fbbf24)', borderTop: '3px solid #d97706', borderBottom: '3px solid #d97706', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {currentMode.hasProtein === 'carrier' && (
                   <div style={{ 
@@ -329,7 +325,6 @@ export default function Sim4() {
                 </div>
               </div>
 
-              {/* 세포 안 */}
               <div style={{ position: 'absolute', bottom: 0, width: '100%', height: '40%', background: 'linear-gradient(to bottom, #fce7f3, #fbcfe8, #fce7f3)' }}>
                 <div style={{ position: 'absolute', bottom: '0.5rem', right: '0.5rem', background: 'rgba(255,255,255,0.95)', borderRadius: '0.5rem', padding: '0.5rem 0.75rem', border: '2px solid #f472b6', zIndex: 10 }}>
                   <p style={{ fontSize: 'clamp(0.7rem, 1.5vw, 0.875rem)', fontWeight: '700', color: '#be185d', margin: 0 }}>🏠 세포 안</p>
@@ -342,7 +337,6 @@ export default function Sim4() {
                 </div>
               </div>
 
-              {/* 이동 입자 */}
               {movingParticles.map(p => {
                 const animDuration = `${1.2 / speedMultiplier}s`;
                 const useCarrier = currentMode.hasProtein === 'carrier';
@@ -364,7 +358,6 @@ export default function Sim4() {
                 );
               })}
 
-              {/* 평형 */}
               {isEquilibrium && (
                 <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 30 }}>
                   <div style={{ background: 'white', borderRadius: '1rem', padding: 'clamp(2rem, 4vw, 3rem)', textAlign: 'center', maxWidth: '90%' }}>
@@ -398,7 +391,6 @@ export default function Sim4() {
             </div>
           </div>
 
-          {/* 그래프 */}
           <div style={{ background: 'white', borderRadius: '1rem', padding: 'clamp(1rem, 2vw, 1.5rem)', boxShadow: '0 25px 50px rgba(0,0,0,0.25)' }}>
             <h3 style={{ fontSize: 'clamp(1rem, 2.5vw, 1.25rem)', fontWeight: '700', marginBottom: '1rem' }}>📈 농도-속도 그래프</h3>
             <ResponsiveContainer width="100%" height={300}>

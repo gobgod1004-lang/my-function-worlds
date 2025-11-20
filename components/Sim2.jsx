@@ -11,13 +11,12 @@ export default function Sim2() {
   const [showMapping, setShowMapping] = useState(false);
   const resultRef = useRef(null);
 
-  // 매핑 함수
   const saltToSaltiness = {
     0: 1, 1: 1,
     2: 2, 3: 2,
     4: 3, 5: 3,
     6: 4,
-    7: 5, // ✅ 적당
+    7: 5,
     8: 6, 9: 6,
     10: 7, 11: 7,
     12: 8, 13: 8,
@@ -28,7 +27,6 @@ export default function Sim2() {
 
   const saltinessLevel = saltToSaltiness[saltAmount];
 
-  // 짠맛 단계별 상태
   const getSaltinessStatus = (level, salt) => {
     const statuses = {
       1: {
@@ -107,7 +105,6 @@ export default function Sim2() {
 
   const status = getSaltinessStatus(saltinessLevel, saltAmount);
 
-  // 국에 소금 추가
   const addSalt = () => {
     if (saltAmount < 25 && !submitted) {
       setSaltAmount(prev => prev + 1);
@@ -116,7 +113,6 @@ export default function Sim2() {
     }
   };
 
-  // 제출
   const handleSubmit = () => {
     setSubmitted(true);
     setTimeout(() => {
@@ -124,7 +120,6 @@ export default function Sim2() {
     }, 100);
   };
 
-  // 리셋
   const handleReset = () => {
     setSaltAmount(0);
     setSubmitted(false);
@@ -156,7 +151,6 @@ export default function Sim2() {
     <div style={{ minHeight: '100vh', background: 'linear-gradient(to bottom right, #fffbeb, #ffedd5)', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
       <style>{animations}</style>
       
-      {/* 상단 섹션 - 소금 넣기 */}
       <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'clamp(2rem, 4vw, 3rem) 1rem' }}>
         <div style={{ maxWidth: '1000px', width: '100%' }}>
           <div style={{ textAlign: 'center', marginBottom: '2rem', position: 'relative' }}>
@@ -175,7 +169,6 @@ export default function Sim2() {
           </div>
 
           <div style={{ background: 'white', borderRadius: '1.5rem', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', padding: 'clamp(2rem, 4vw, 3rem)' }}>
-            {/* 소고기 무국 */}
             <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
               <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', fontWeight: '700', color: '#1f2937', marginBottom: '1rem' }}>
                 소고기 무국
@@ -185,43 +178,34 @@ export default function Sim2() {
               </p>
             </div>
 
-            {/* 국 그릇 (클릭 가능) */}
             <div 
               onClick={addSalt}
               style={{ position: 'relative', margin: '0 auto 2rem', cursor: 'pointer', width: '100%', maxWidth: '300px', height: '300px', transition: 'transform 0.3s' }}
               onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.05)'; }}
               onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; }}
             >
-              {/* 그릇 */}
               <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
                 <div style={{ width: '18rem', height: '12rem', background: 'linear-gradient(to bottom, #fed7aa, #fdba74)', borderRadius: '50%', border: '8px solid #fb923c', boxShadow: '0 20px 25px rgba(0,0,0,0.15)', position: 'relative', overflow: 'hidden' }}>
-                  {/* 국물 */}
                   <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, #fde68a, #fcd34d)' }}>
-                    {/* 무 조각들 */}
                     <div style={{ position: 'absolute', top: '2rem', left: '3rem', width: '2rem', height: '2rem', background: 'white', borderRadius: '0.375rem', opacity: 0.7 }}></div>
                     <div style={{ position: 'absolute', top: '4rem', right: '4rem', width: '1.5rem', height: '1.5rem', background: 'white', borderRadius: '0.375rem', opacity: 0.6 }}></div>
                     <div style={{ position: 'absolute', bottom: '3rem', left: '5rem', width: '2.5rem', height: '2.5rem', background: 'white', borderRadius: '0.375rem', opacity: 0.8 }}></div>
-                    {/* 고기 */}
                     <div style={{ position: 'absolute', top: '5rem', right: '6rem', width: '1.5rem', height: '1rem', background: '#7f1d1d', borderRadius: '0.25rem', opacity: 0.7 }}></div>
                     <div style={{ position: 'absolute', top: '6rem', left: '7rem', width: '2rem', height: '1.25rem', background: '#7f1d1d', borderRadius: '0.25rem', opacity: 0.6 }}></div>
                   </div>
                   
-                  {/* 김 (증기) */}
                   <div style={{ position: 'absolute', top: '-1.5rem', left: '50%', transform: 'translateX(-50%)', animation: 'pulse 2s ease-in-out infinite' }}>
                     <div style={{ fontSize: 'clamp(2rem, 5vw, 2.5rem)', opacity: 0.6 }}>💨</div>
                   </div>
                 </div>
               </div>
 
-              {/* 소금 애니메이션 */}
               {saltAnimation && (
                 <>
-                  {/* 소금통 */}
                   <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%) rotate(-45deg)' }}>
                     <span style={{ fontSize: 'clamp(4rem, 10vw, 5rem)' }}>🧂</span>
                   </div>
                   
-                  {/* 떨어지는 소금 */}
                   <div
                     style={{
                       position: 'absolute',
@@ -236,7 +220,6 @@ export default function Sim2() {
               )}
             </div>
 
-            {/* 현재 소금 양 */}
             <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
               <div style={{ display: 'inline-block', background: 'linear-gradient(to right, #fef3c7, #fde68a)', borderRadius: '9999px', padding: 'clamp(1rem, 2vw, 1.5rem) clamp(2rem, 4vw, 3rem)', boxShadow: '0 10px 15px rgba(0,0,0,0.1)' }}>
                 <p style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', color: '#6b7280', marginBottom: '0.25rem' }}>넣은 소금</p>
@@ -249,8 +232,8 @@ export default function Sim2() {
               </div>
             </div>
 
-            {/* 버튼들 */}
-            <div style={{ display: 'flex', flexDirection: window.innerWidth < 640 ? 'column' : 'row', gap: '1rem', justifyContent: 'center' }}>
+            {/* ✅ 수정: flexDirection을 'row'로 고정, flexWrap으로 반응형 처리 */}
+            <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '1rem', justifyContent: 'center' }}>
               <button
                 onClick={handleSubmit}
                 disabled={submitted}
@@ -285,7 +268,6 @@ export default function Sim2() {
         </div>
       </div>
 
-      {/* 하단 섹션 - 결과 */}
       {submitted && (
         <div ref={resultRef} style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'clamp(2rem, 4vw, 3rem) 1rem', background: 'linear-gradient(to bottom right, #faf5ff, #fce7f3)' }}>
           <div style={{ maxWidth: '1000px', width: '100%' }}>
@@ -295,7 +277,6 @@ export default function Sim2() {
               </h2>
             </div>
 
-            {/* 손님 반응 */}
             <div style={{ background: status.bg, borderRadius: '1.5rem', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', padding: 'clamp(2rem, 4vw, 3rem)', marginBottom: '2rem' }}>
               <div style={{ textAlign: 'center' }}>
                 <div style={{ fontSize: 'clamp(5rem, 15vw, 9rem)', marginBottom: '1.5rem' }}>{status.emoji}</div>
@@ -314,7 +295,6 @@ export default function Sim2() {
               </div>
             </div>
 
-            {/* 정의역 → 치역 매핑 */}
             <div style={{ background: 'white', borderRadius: '1.5rem', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', padding: 'clamp(1.5rem, 3vw, 2rem)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
                 <h3 style={{ fontSize: 'clamp(1.25rem, 3vw, 1.5rem)', fontWeight: '700', color: '#1f2937', margin: 0 }}>
@@ -332,8 +312,8 @@ export default function Sim2() {
               
               {showMapping && (
                 <>
-                  <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth < 640 ? '1fr' : '1fr 1fr', gap: 'clamp(1rem, 2vw, 2rem)', marginBottom: '1.5rem' }}>
-                    {/* 정의역 */}
+                  {/* ✅ 수정: gridTemplateColumns 반응형 처리 */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'clamp(1rem, 2vw, 2rem)', marginBottom: '1.5rem' }}>
                     <div style={{ background: 'linear-gradient(135deg, #dbeafe, #bfdbfe)', borderRadius: '0.75rem', padding: 'clamp(1rem, 2vw, 1.5rem)' }}>
                       <h4 style={{ fontWeight: '700', fontSize: 'clamp(1rem, 2.5vw, 1.125rem)', color: '#1e40af', marginBottom: '1rem', textAlign: 'center' }}>
                         정의역 (입력)
@@ -348,7 +328,6 @@ export default function Sim2() {
                       </div>
                     </div>
 
-                    {/* 치역 */}
                     <div style={{ background: 'linear-gradient(135deg, #fed7aa, #fdba74)', borderRadius: '0.75rem', padding: 'clamp(1rem, 2vw, 1.5rem)' }}>
                       <h4 style={{ fontWeight: '700', fontSize: 'clamp(1rem, 2.5vw, 1.125rem)', color: '#9a3412', marginBottom: '1rem', textAlign: 'center' }}>
                         치역 (출력)
@@ -364,10 +343,8 @@ export default function Sim2() {
                     </div>
                   </div>
 
-                  {/* 매핑 표 */}
                   <div style={{ background: '#f9fafb', borderRadius: '0.75rem', padding: 'clamp(1rem, 2vw, 1.5rem)', maxHeight: '400px', overflowY: 'auto' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(0.75rem, 2vw, 1rem)' }}>
-                      {/* 각 단계별 매핑 */}
                       {[
                         { level: 1, emoji: '😰', title: '1단계 - 너무 싱거워요', bg: '#dbeafe', color: '#1e40af', mapping: '0g, 1g → 1단계' },
                         { level: 2, emoji: '😕', title: '2단계 - 많이 싱거워요', bg: '#dbeafe', color: '#1e40af', mapping: '2g, 3g → 2단계' },
@@ -401,7 +378,6 @@ export default function Sim2() {
               )}
             </div>
 
-            {/* 돌아가기 버튼 */}
             <div style={{ marginTop: '2rem', textAlign: 'center' }}>
               <button 
                 onClick={() => router.push('/')}
