@@ -2,13 +2,12 @@
 
 import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceDot, Area, AreaChart } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceDot } from 'recharts';
 
 export default function Sim1() {
   const router = useRouter();
   const [cookingTime, setCookingTime] = useState(0);
 
-  // 분할 함수 계산
   const getRamenState = (x) => {
     if (x < 2) return 1.25 * x * x;
     if (x < 4) return 1.25 * Math.pow(x - 2, 2) + 5;
@@ -19,7 +18,6 @@ export default function Sim1() {
 
   const ramenScore = useMemo(() => getRamenState(cookingTime), [cookingTime]);
 
-  // 그래프 데이터 생성
   const graphData = useMemo(() => {
     const data = [];
     for (let x = 0; x <= 10; x += 0.05) {
@@ -32,7 +30,6 @@ export default function Sim1() {
     return data;
   }, []);
 
-  // 라면 상태 판단
   const getRamenStatus = (score, time) => {
     if (time < 2) {
       return { 
@@ -94,7 +91,6 @@ export default function Sim1() {
   return (
     <div style={{ minHeight: '100vh', background: 'linear-gradient(to bottom right, #fefce8, #ffedd5)', padding: 'clamp(2rem, 4vw, 3rem) 1rem', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-        {/* 헤더 */}
         <div style={{ textAlign: 'center', marginBottom: '2rem', position: 'relative' }}>
           <button onClick={() => router.push('/')}
             style={{ position: 'absolute', left: 0, top: 0, padding: '0.75rem 1.5rem', background: '#6b7280', color: 'white', borderRadius: '9999px', fontWeight: '700', fontSize: 'clamp(0.875rem, 2vw, 1rem)', border: 'none', cursor: 'pointer', boxShadow: '0 10px 15px rgba(0,0,0,0.1)', transition: 'all 0.3s' }}
@@ -110,10 +106,9 @@ export default function Sim1() {
           </p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth < 1024 ? '1fr' : '1fr 1fr', gap: 'clamp(1.5rem, 3vw, 2rem)' }}>
-          {/* 왼쪽: 컨트롤 & 결과 */}
+        {/* ✅ 수정: window 제거 */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 'clamp(1.5rem, 3vw, 2rem)' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(1.5rem, 3vw, 2rem)' }}>
-            {/* 슬라이더 컨트롤 */}
             <div style={{ background: 'white', borderRadius: '1.5rem', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', padding: 'clamp(1.5rem, 3vw, 2rem)' }}>
               <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', fontWeight: '700', color: '#1f2937', marginBottom: '1.5rem' }}>조리 시간 조절</h2>
               
@@ -144,7 +139,6 @@ export default function Sim1() {
                 </div>
               </div>
 
-              {/* 현재 점수 표시 */}
               <div style={{ background: 'linear-gradient(to right, #fef3c7, #fed7aa)', borderRadius: '0.75rem', padding: 'clamp(1rem, 2vw, 1.5rem)', textAlign: 'center' }}>
                 <p style={{ color: '#6b7280', marginBottom: '0.5rem', fontSize: 'clamp(0.875rem, 2vw, 1rem)' }}>라면 맛 점수</p>
                 <p style={{ fontSize: 'clamp(2.5rem, 8vw, 3rem)', fontWeight: '700', color: '#ea580c', margin: 0 }}>
@@ -153,7 +147,6 @@ export default function Sim1() {
               </div>
             </div>
 
-            {/* 라면 상태 */}
             <div style={{ background: ramenStatus.bg, borderRadius: '1.5rem', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', padding: 'clamp(1.5rem, 3vw, 2rem)', textAlign: 'center', transition: 'all 0.5s' }}>
               <div style={{ fontSize: 'clamp(5rem, 15vw, 8rem)', marginBottom: '1rem' }}>{ramenStatus.emoji}</div>
               <h3 style={{ fontSize: 'clamp(1.5rem, 4vw, 1.875rem)', fontWeight: '700', color: ramenStatus.color, marginBottom: '1rem' }}>
@@ -183,7 +176,6 @@ export default function Sim1() {
             </div>
           </div>
 
-          {/* 오른쪽: 그래프 */}
           <div style={{ background: 'white', borderRadius: '1.5rem', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', padding: 'clamp(1.5rem, 3vw, 2rem)' }}>
             <h2 style={{ fontSize: 'clamp(1.25rem, 3vw, 1.5rem)', fontWeight: '700', color: '#1f2937', marginBottom: '1.5rem' }}>라면 상태 변화 그래프</h2>
             
@@ -214,7 +206,6 @@ export default function Sim1() {
                   labelFormatter={(label) => `${label.toFixed(1)}분`}
                   contentStyle={{ fontSize: 'clamp(0.75rem, 1.8vw, 0.875rem)', borderRadius: '0.5rem', border: '2px solid #fb923c' }}
                 />
-                {/* 최적 구간 표시 */}
                 <Area
                   type="monotone"
                   dataKey={(data) => data.isOptimal ? data.y : null}
@@ -240,7 +231,6 @@ export default function Sim1() {
               </AreaChart>
             </ResponsiveContainer>
 
-            {/* 함수 정보 */}
             <div style={{ marginTop: '1.5rem', padding: '1rem', background: '#f9fafb', borderRadius: '0.5rem', fontSize: 'clamp(0.75rem, 1.8vw, 0.875rem)' }}>
               <h3 style={{ fontWeight: '700', color: '#1f2937', marginBottom: '0.5rem' }}>📐 분할 함수식</h3>
               <div style={{ fontFamily: 'monospace', fontSize: 'clamp(0.625rem, 1.5vw, 0.75rem)', color: '#374151', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
@@ -254,7 +244,6 @@ export default function Sim1() {
           </div>
         </div>
 
-        {/* 하단 네비게이션 */}
         <div style={{ marginTop: 'clamp(2rem, 4vw, 3rem)', textAlign: 'center' }}>
           <button 
             onClick={() => router.push('/')}
