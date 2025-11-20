@@ -129,7 +129,7 @@ export default function Sim6() {
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth < 1024 ? '1fr' : '1fr 1fr', gap: 'clamp(1.5rem, 3vw, 2rem)' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 'clamp(1.5rem, 3vw, 2rem)' }}>
           {/* 왼쪽: 선택된 견종 정보 */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(1.5rem, 3vw, 2rem)' }}>
             <div style={{ background: currentBreed.bgGradient, borderRadius: '1.5rem', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', padding: 'clamp(2rem, 4vw, 3rem)', textAlign: 'center', border: `4px solid ${currentBreed.color}` }}>
