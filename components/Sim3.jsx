@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function Sim3() {
@@ -10,6 +10,15 @@ export default function Sim3() {
   const [submitted, setSubmitted] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
   const [showCodonTable, setShowCodonTable] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // 모바일 감지
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const codonTable = {
     'UUU': { name: '페닐알라닌', abbr: 'Phe', desc: '신경전달물질 전구체로 뇌 기능과 기분 조절에 도움을 줘요.' },
@@ -85,6 +94,18 @@ export default function Sim3() {
     { letter: 'G', color: '#f87171', name: 'Guanine' }
   ];
 
+  // 🔥 모바일: 클릭으로 순서대로 입력
+  const handleBaseClick = (base) => {
+    if (submitted) return;
+    const emptyIndex = slots.findIndex(s => s === '');
+    if (emptyIndex !== -1) {
+      const newSlots = [...slots];
+      newSlots[emptyIndex] = base;
+      setSlots(newSlots);
+    }
+  };
+
+  // PC: 드래그앤드롭
   const handleDragStart = (base) => setDraggedBase(base);
   const handleDrop = (index) => {
     if (draggedBase && !submitted) {
@@ -94,6 +115,7 @@ export default function Sim3() {
       setDraggedBase(null);
     }
   };
+
   const handleClear = () => { setSlots(['', '', '']); setSubmitted(false); };
   const handleSubmit = () => { if (slots.every(s => s !== '')) setSubmitted(true); };
 
@@ -110,95 +132,122 @@ export default function Sim3() {
   const resultStyle = getResultStyle();
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(to bottom right, #faf5ff, #fce7f3)', padding: 'clamp(2rem, 4vw, 3rem) 1rem', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(to bottom right, #faf5ff, #fce7f3)', padding: 'clamp(1rem, 3vw, 3rem) clamp(0.5rem, 2vw, 1rem)', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: '2rem', position: 'relative' }}>
+        <div style={{ textAlign: 'center', marginBottom: 'clamp(1rem, 3vw, 2rem)', position: 'relative' }}>
           <button onClick={() => router.push('/')}
-            style={{ position: 'absolute', left: 0, top: 0, padding: '0.75rem 1.5rem', background: '#6b7280', color: 'white', borderRadius: '9999px', fontWeight: '700', fontSize: 'clamp(0.875rem, 2vw, 1rem)', border: 'none', cursor: 'pointer', boxShadow: '0 10px 15px rgba(0,0,0,0.1)', transition: 'all 0.3s' }}
+            style={{ position: isMobile ? 'static' : 'absolute', left: 0, top: 0, padding: 'clamp(0.5rem, 2vw, 0.75rem) clamp(1rem, 3vw, 1.5rem)', background: '#6b7280', color: 'white', borderRadius: '9999px', fontWeight: '700', fontSize: 'clamp(0.75rem, 2vw, 1rem)', border: 'none', cursor: 'pointer', boxShadow: '0 10px 15px rgba(0,0,0,0.1)', transition: 'all 0.3s', marginBottom: isMobile ? '1rem' : 0 }}
             onMouseEnter={e => { e.currentTarget.style.background = '#4b5563'; }}
             onMouseLeave={e => { e.currentTarget.style.background = '#6b7280'; }}>
             ← 메인으로
           </button>
-          <h1 style={{ fontSize: 'clamp(2rem, 5vw, 2.5rem)', fontWeight: '700', color: '#1f2937', marginBottom: '0.5rem' }}>
+          <h1 style={{ fontSize: 'clamp(1.5rem, 5vw, 2.5rem)', fontWeight: '700', color: '#1f2937', marginBottom: '0.5rem' }}>
             🧬 코돈과 아미노산
           </h1>
-          <p style={{ color: '#6b7280', fontSize: 'clamp(0.875rem, 2vw, 1rem)' }}>
-            3개의 염기를 조합하여 어떤 아미노산이 만들어지는지 확인해보세요
+          <p style={{ color: '#6b7280', fontSize: 'clamp(0.75rem, 2vw, 1rem)' }}>
+            {isMobile ? '염기를 터치하여 순서대로 선택하세요' : '3개의 염기를 조합하여 어떤 아미노산이 만들어지는지 확인해보세요'}
           </p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 'clamp(1.5rem, 3vw, 2rem)' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(1.5rem, 3vw, 2rem)' }}>
-            <div style={{ background: 'white', borderRadius: '1.5rem', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', padding: 'clamp(1.5rem, 3vw, 2rem)' }}>
-              <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', fontWeight: '700', color: '#1f2937', marginBottom: '1rem' }}>염기 선택</h2>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(300px, 1fr))', gap: 'clamp(1rem, 3vw, 2rem)' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(1rem, 3vw, 2rem)' }}>
+            <div style={{ background: 'white', borderRadius: '1rem', boxShadow: '0 10px 30px rgba(0,0,0,0.15)', padding: 'clamp(1rem, 3vw, 2rem)' }}>
+              <h2 style={{ fontSize: 'clamp(1.25rem, 4vw, 2rem)', fontWeight: '700', color: '#1f2937', marginBottom: '1rem' }}>염기 선택</h2>
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(2, 1fr)', gap: 'clamp(0.5rem, 2vw, 1rem)' }}>
                 {bases.map((base) => (
                   <div
                     key={base.letter}
-                    draggable
-                    onDragStart={() => handleDragStart(base.letter)}
+                    draggable={!isMobile}
+                    onDragStart={() => !isMobile && handleDragStart(base.letter)}
+                    onClick={() => isMobile && handleBaseClick(base.letter)}
                     style={{ 
                       background: base.color, 
                       borderRadius: '0.75rem', 
-                      padding: 'clamp(1.5rem, 3vw, 2rem)', 
-                      cursor: 'move', 
-                      boxShadow: '0 10px 15px rgba(0,0,0,0.1)', 
+                      padding: 'clamp(1rem, 3vw, 2rem)', 
+                      cursor: isMobile ? 'pointer' : 'move', 
+                      boxShadow: '0 4px 10px rgba(0,0,0,0.1)', 
                       transition: 'all 0.3s',
                       textAlign: 'center',
-                      userSelect: 'none'
+                      userSelect: 'none',
+                      touchAction: 'manipulation'
                     }}
-                    onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.05)'; e.currentTarget.style.boxShadow = '0 20px 25px rgba(0,0,0,0.15)'; }}
-                    onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 10px 15px rgba(0,0,0,0.1)'; }}
+                    onMouseEnter={e => { if (!isMobile) { e.currentTarget.style.transform = 'scale(1.05)'; e.currentTarget.style.boxShadow = '0 8px 20px rgba(0,0,0,0.15)'; } }}
+                    onMouseLeave={e => { if (!isMobile) { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 4px 10px rgba(0,0,0,0.1)'; } }}
                   >
-                    <div style={{ fontSize: 'clamp(2.5rem, 8vw, 4rem)', fontWeight: '700', color: 'white', marginBottom: '0.5rem' }}>{base.letter}</div>
-                    <div style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', color: 'white', opacity: 0.9 }}>{base.name}</div>
+                    <div style={{ fontSize: 'clamp(2rem, 8vw, 4rem)', fontWeight: '700', color: 'white', marginBottom: '0.25rem' }}>{base.letter}</div>
+                    <div style={{ fontSize: 'clamp(0.7rem, 2vw, 1rem)', color: 'white', opacity: 0.9 }}>{base.name}</div>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div style={{ background: 'white', borderRadius: '1.5rem', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', padding: 'clamp(1.5rem, 3vw, 2rem)' }}>
-              <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', fontWeight: '700', color: '#1f2937', marginBottom: '1rem' }}>코돈 조립</h2>
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginBottom: '1rem' }}>
+            <div style={{ background: 'white', borderRadius: '1rem', boxShadow: '0 10px 30px rgba(0,0,0,0.15)', padding: 'clamp(1rem, 3vw, 2rem)' }}>
+              <h2 style={{ fontSize: 'clamp(1.25rem, 4vw, 2rem)', fontWeight: '700', color: '#1f2937', marginBottom: '1rem' }}>코돈 조립</h2>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 'clamp(0.5rem, 2vw, 1rem)', marginBottom: '1rem' }}>
                 {slots.map((slot, index) => (
                   <div
                     key={index}
-                    onDragOver={(e) => e.preventDefault()}
-                    onDrop={() => handleDrop(index)}
+                    onDragOver={(e) => !isMobile && e.preventDefault()}
+                    onDrop={() => !isMobile && handleDrop(index)}
                     style={{ 
-                      width: 'clamp(4rem, 15vw, 5rem)', 
-                      height: 'clamp(4rem, 15vw, 5rem)', 
+                      width: 'clamp(3rem, 15vw, 5rem)', 
+                      height: 'clamp(3rem, 15vw, 5rem)', 
                       border: '2px dashed #d1d5db', 
                       borderRadius: '0.75rem', 
                       display: 'flex', 
                       alignItems: 'center', 
                       justifyContent: 'center', 
-                      fontSize: 'clamp(2rem, 6vw, 2.5rem)', 
+                      fontSize: 'clamp(1.5rem, 6vw, 2.5rem)', 
                       fontWeight: '700',
-                      cursor: 'pointer',
+                      cursor: isMobile ? 'default' : 'pointer',
                       transition: 'all 0.3s',
                       background: 'white'
                     }}
-                    onMouseEnter={e => { e.currentTarget.style.background = '#f9fafb'; }}
-                    onMouseLeave={e => { e.currentTarget.style.background = 'white'; }}
+                    onMouseEnter={e => { if (!isMobile) e.currentTarget.style.background = '#f9fafb'; }}
+                    onMouseLeave={e => { if (!isMobile) e.currentTarget.style.background = 'white'; }}
                   >
                     {slot}
                   </div>
                 ))}
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 'clamp(0.5rem, 2vw, 1rem)', flexWrap: 'wrap' }}>
                 <button
                   onClick={handleSubmit}
-                  style={{ padding: 'clamp(0.5rem, 1.5vw, 0.75rem) clamp(1rem, 3vw, 1.5rem)', background: '#6366f1', color: 'white', borderRadius: '0.75rem', fontWeight: '700', fontSize: 'clamp(0.875rem, 2vw, 1rem)', border: 'none', cursor: 'pointer', boxShadow: '0 10px 15px rgba(0,0,0,0.1)', transition: 'all 0.3s' }}
-                  onMouseEnter={e => { e.currentTarget.style.background = '#4f46e5'; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = '#6366f1'; }}
+                  disabled={!slots.every(s => s !== '')}
+                  style={{ 
+                    padding: 'clamp(0.5rem, 1.5vw, 0.75rem) clamp(1rem, 3vw, 1.5rem)', 
+                    background: slots.every(s => s !== '') ? '#6366f1' : '#d1d5db', 
+                    color: 'white', 
+                    borderRadius: '0.75rem', 
+                    fontWeight: '700', 
+                    fontSize: 'clamp(0.75rem, 2vw, 1rem)', 
+                    border: 'none', 
+                    cursor: slots.every(s => s !== '') ? 'pointer' : 'not-allowed', 
+                    boxShadow: slots.every(s => s !== '') ? '0 4px 10px rgba(0,0,0,0.1)' : 'none', 
+                    transition: 'all 0.3s',
+                    touchAction: 'manipulation'
+                  }}
+                  onMouseEnter={e => { if (slots.every(s => s !== '')) e.currentTarget.style.background = '#4f46e5'; }}
+                  onMouseLeave={e => { if (slots.every(s => s !== '')) e.currentTarget.style.background = '#6366f1'; }}
                 >
                   확인
                 </button>
                 <button
                   onClick={handleClear}
-                  style={{ padding: 'clamp(0.5rem, 1.5vw, 0.75rem) clamp(1rem, 3vw, 1.5rem)', background: '#d1d5db', color: '#374151', borderRadius: '0.75rem', fontWeight: '700', fontSize: 'clamp(0.875rem, 2vw, 1rem)', border: 'none', cursor: 'pointer', boxShadow: '0 10px 15px rgba(0,0,0,0.1)', transition: 'all 0.3s' }}
+                  style={{ 
+                    padding: 'clamp(0.5rem, 1.5vw, 0.75rem) clamp(1rem, 3vw, 1.5rem)', 
+                    background: '#d1d5db', 
+                    color: '#374151', 
+                    borderRadius: '0.75rem', 
+                    fontWeight: '700', 
+                    fontSize: 'clamp(0.75rem, 2vw, 1rem)', 
+                    border: 'none', 
+                    cursor: 'pointer', 
+                    boxShadow: '0 4px 10px rgba(0,0,0,0.1)', 
+                    transition: 'all 0.3s',
+                    touchAction: 'manipulation'
+                  }}
                   onMouseEnter={e => { e.currentTarget.style.background = '#9ca3af'; }}
                   onMouseLeave={e => { e.currentTarget.style.background = '#d1d5db'; }}
                 >
@@ -207,10 +256,22 @@ export default function Sim3() {
               </div>
             </div>
 
-            <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 'clamp(0.5rem, 2vw, 0.75rem)' }}>
               <button
                 onClick={() => setShowCodonTable(!showCodonTable)}
-                style={{ padding: 'clamp(0.75rem, 2vw, 1rem) clamp(1.5rem, 4vw, 2rem)', background: '#a855f7', color: 'white', borderRadius: '9999px', fontWeight: '700', fontSize: 'clamp(0.875rem, 2vw, 1rem)', border: 'none', cursor: 'pointer', boxShadow: '0 10px 15px rgba(0,0,0,0.1)', transition: 'all 0.3s' }}
+                style={{ 
+                  padding: 'clamp(0.5rem, 2vw, 1rem) clamp(1rem, 4vw, 2rem)', 
+                  background: '#a855f7', 
+                  color: 'white', 
+                  borderRadius: '9999px', 
+                  fontWeight: '700', 
+                  fontSize: 'clamp(0.75rem, 2vw, 1rem)', 
+                  border: 'none', 
+                  cursor: 'pointer', 
+                  boxShadow: '0 4px 10px rgba(0,0,0,0.1)', 
+                  transition: 'all 0.3s',
+                  touchAction: 'manipulation'
+                }}
                 onMouseEnter={e => { e.currentTarget.style.background = '#9333ea'; }}
                 onMouseLeave={e => { e.currentTarget.style.background = '#a855f7'; }}
               >
@@ -218,7 +279,16 @@ export default function Sim3() {
               </button>
               <button
                 onClick={() => setShowGuide(!showGuide)}
-                style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', color: '#6366f1', textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer', transition: 'color 0.3s' }}
+                style={{ 
+                  fontSize: 'clamp(0.75rem, 2vw, 1rem)', 
+                  color: '#6366f1', 
+                  textDecoration: 'underline', 
+                  background: 'none', 
+                  border: 'none', 
+                  cursor: 'pointer', 
+                  transition: 'color 0.3s',
+                  touchAction: 'manipulation'
+                }}
                 onMouseEnter={e => { e.currentTarget.style.color = '#4338ca'; }}
                 onMouseLeave={e => { e.currentTarget.style.color = '#6366f1'; }}
               >
@@ -227,30 +297,30 @@ export default function Sim3() {
             </div>
           </div>
 
-          <div style={{ background: 'white', borderRadius: '1.5rem', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', padding: 'clamp(1.5rem, 3vw, 2rem)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '400px' }}>
-            <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', fontWeight: '700', color: '#1f2937', marginBottom: '1.5rem' }}>결과</h2>
-            <div style={{ background: resultStyle.bg, borderRadius: '0.75rem', padding: 'clamp(1.5rem, 3vw, 2rem)', width: '100%', textAlign: 'center', transition: 'all 0.3s', border: codon === 'AUG' ? '3px solid #a855f7' : result?.abbr === 'STOP' ? '3px solid #dc2626' : 'none' }}>
-              <p style={{ color: resultStyle.color, fontWeight: '700', fontSize: 'clamp(1.5rem, 4vw, 2rem)', marginBottom: '0.5rem' }}>
+          <div style={{ background: 'white', borderRadius: '1rem', boxShadow: '0 10px 30px rgba(0,0,0,0.15)', padding: 'clamp(1rem, 3vw, 2rem)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: isMobile ? '300px' : '400px' }}>
+            <h2 style={{ fontSize: 'clamp(1.25rem, 4vw, 2rem)', fontWeight: '700', color: '#1f2937', marginBottom: '1rem' }}>결과</h2>
+            <div style={{ background: resultStyle.bg, borderRadius: '0.75rem', padding: 'clamp(1rem, 3vw, 2rem)', width: '100%', textAlign: 'center', transition: 'all 0.3s', border: codon === 'AUG' ? '3px solid #a855f7' : result?.abbr === 'STOP' ? '3px solid #dc2626' : 'none' }}>
+              <p style={{ color: resultStyle.color, fontWeight: '700', fontSize: 'clamp(1.25rem, 4vw, 2rem)', marginBottom: '0.5rem' }}>
                 {result ? result.name : '???'}
               </p>
               {result && (
-                <p style={{ color: resultStyle.color, fontSize: 'clamp(0.875rem, 2vw, 1rem)', fontWeight: '600', marginBottom: '1rem' }}>
+                <p style={{ color: resultStyle.color, fontSize: 'clamp(0.75rem, 2vw, 1rem)', fontWeight: '600', marginBottom: '0.75rem' }}>
                   ({result.abbr})
                 </p>
               )}
-              <p style={{ color: resultStyle.color, fontSize: 'clamp(0.875rem, 2vw, 1rem)', lineHeight: '1.5' }}>
-                {result ? result.desc : '염기를 모두 배치하고 확인 버튼을 눌러보세요.'}
+              <p style={{ color: resultStyle.color, fontSize: 'clamp(0.75rem, 2vw, 1rem)', lineHeight: '1.5' }}>
+                {result ? result.desc : isMobile ? '염기 3개를 선택한 후 확인을 눌러보세요.' : '염기를 모두 배치하고 확인 버튼을 눌러보세요.'}
               </p>
               {codon === 'AUG' && (
-                <div style={{ marginTop: '1rem', padding: '0.5rem', background: 'rgba(168, 85, 247, 0.2)', borderRadius: '0.5rem' }}>
-                  <p style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', fontWeight: '700', color: '#7c3aed', margin: 0 }}>
+                <div style={{ marginTop: '0.75rem', padding: '0.5rem', background: 'rgba(168, 85, 247, 0.2)', borderRadius: '0.5rem' }}>
+                  <p style={{ fontSize: 'clamp(0.75rem, 2vw, 1rem)', fontWeight: '700', color: '#7c3aed', margin: 0 }}>
                     ⭐ 시작 코돈
                   </p>
                 </div>
               )}
               {result?.abbr === 'STOP' && (
-                <div style={{ marginTop: '1rem', padding: '0.5rem', background: 'rgba(220, 38, 38, 0.2)', borderRadius: '0.5rem' }}>
-                  <p style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', fontWeight: '700', color: '#dc2626', margin: 0 }}>
+                <div style={{ marginTop: '0.75rem', padding: '0.5rem', background: 'rgba(220, 38, 38, 0.2)', borderRadius: '0.5rem' }}>
+                  <p style={{ fontSize: 'clamp(0.75rem, 2vw, 1rem)', fontWeight: '700', color: '#dc2626', margin: 0 }}>
                     🛑 종결 코돈
                   </p>
                 </div>
@@ -258,46 +328,43 @@ export default function Sim3() {
             </div>
 
             {showGuide && (
-              <div style={{ marginTop: '1.5rem', textAlign: 'left', background: '#f9fafb', padding: '1rem', borderRadius: '0.75rem', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.06)', color: '#374151', fontSize: 'clamp(0.875rem, 2vw, 1rem)', lineHeight: '1.6' }}>
+              <div style={{ marginTop: '1rem', textAlign: 'left', background: '#f9fafb', padding: 'clamp(0.75rem, 2vw, 1rem)', borderRadius: '0.75rem', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.06)', color: '#374151', fontSize: 'clamp(0.7rem, 2vw, 1rem)', lineHeight: '1.5', width: '100%' }}>
                 <p style={{ marginBottom: '0.5rem' }}>💡 <strong>TIP:</strong></p>
                 <p style={{ marginBottom: '0.5rem' }}>• AUG는 <strong style={{ color: '#7c3aed' }}>시작 코돈</strong></p>
                 <p style={{ marginBottom: '0.5rem' }}>• UAA/UAG/UGA는 <strong style={{ color: '#dc2626' }}>종결 코돈</strong></p>
-                <p style={{ margin: 0 }}>• 분지사슬 아미노산(BCAA): 류신, 발린, 이소류신</p>
+                <p style={{ margin: 0 }}>• BCAA: 류신, 발린, 이소류신</p>
               </div>
             )}
           </div>
         </div>
 
-        {/* ✅ 코돈표 추가 */}
         {showCodonTable && (
-          <div style={{ marginTop: 'clamp(2rem, 4vw, 3rem)', background: 'white', borderRadius: '1.5rem', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', padding: 'clamp(1.5rem, 3vw, 2rem)' }}>
-            <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', fontWeight: '700', color: '#1f2937', marginBottom: '1rem', textAlign: 'center' }}>
+          <div style={{ marginTop: 'clamp(1rem, 3vw, 3rem)', background: 'white', borderRadius: '1rem', boxShadow: '0 10px 30px rgba(0,0,0,0.15)', padding: 'clamp(1rem, 3vw, 2rem)' }}>
+            <h2 style={{ fontSize: 'clamp(1.25rem, 4vw, 2rem)', fontWeight: '700', color: '#1f2937', marginBottom: '0.75rem', textAlign: 'center' }}>
               📊 코돈표
             </h2>
-            <p style={{ textAlign: 'center', color: '#6b7280', fontSize: 'clamp(0.875rem, 2vw, 1rem)', marginBottom: '1.5rem' }}>
+            <p style={{ textAlign: 'center', color: '#6b7280', fontSize: 'clamp(0.7rem, 2vw, 1rem)', marginBottom: '1rem' }}>
               정의역(64가지 코돈) → 치역(20가지 아미노산 + 종결 신호)
             </p>
             
             <div style={{ overflowX: 'auto' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '0.5rem', minWidth: '600px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(auto-fill, minmax(80px, 1fr))' : 'repeat(auto-fill, minmax(120px, 1fr))', gap: 'clamp(0.25rem, 1vw, 0.5rem)', minWidth: isMobile ? 'auto' : '600px' }}>
                 {Object.entries(codonTable).map(([key, value]) => (
                   <div
                     key={key}
                     style={{
-                      padding: 'clamp(0.5rem, 1.5vw, 0.75rem)',
+                      padding: 'clamp(0.4rem, 1.5vw, 0.75rem)',
                       borderRadius: '0.5rem',
                       background: value.abbr === 'STOP' ? 'linear-gradient(135deg, #fee2e2, #fecaca)' : key === 'AUG' ? 'linear-gradient(135deg, #f3e8ff, #e9d5ff)' : 'linear-gradient(135deg, #f0fdf4, #dcfce7)',
                       border: value.abbr === 'STOP' ? '2px solid #dc2626' : key === 'AUG' ? '2px solid #a855f7' : '2px solid #22c55e',
                       textAlign: 'center',
                       transition: 'all 0.3s'
                     }}
-                    onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.05)'; }}
-                    onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; }}
                   >
-                    <p style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', fontWeight: '700', color: value.abbr === 'STOP' ? '#991b1b' : key === 'AUG' ? '#6b21a8' : '#15803d', margin: '0 0 0.25rem 0' }}>
+                    <p style={{ fontSize: 'clamp(0.7rem, 2vw, 1rem)', fontWeight: '700', color: value.abbr === 'STOP' ? '#991b1b' : key === 'AUG' ? '#6b21a8' : '#15803d', margin: '0 0 0.2rem 0' }}>
                       {key}
                     </p>
-                    <p style={{ fontSize: 'clamp(0.7rem, 1.5vw, 0.8rem)', color: value.abbr === 'STOP' ? '#dc2626' : key === 'AUG' ? '#9333ea' : '#16a34a', margin: 0 }}>
+                    <p style={{ fontSize: 'clamp(0.6rem, 1.5vw, 0.8rem)', color: value.abbr === 'STOP' ? '#dc2626' : key === 'AUG' ? '#9333ea' : '#16a34a', margin: 0 }}>
                       {value.name}
                     </p>
                   </div>
@@ -305,16 +372,16 @@ export default function Sim3() {
               </div>
             </div>
 
-            <div style={{ marginTop: '1.5rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
-              <div style={{ background: 'linear-gradient(135deg, #dbeafe, #bfdbfe)', borderRadius: '0.75rem', padding: '1rem', border: '2px solid #3b82f6' }}>
-                <p style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', fontWeight: '700', color: '#1e40af', marginBottom: '0.5rem' }}>📥 정의역 (Domain)</p>
-                <p style={{ fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)', color: '#1e40af', margin: 0 }}>
+            <div style={{ marginTop: '1rem', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'clamp(0.5rem, 2vw, 1rem)' }}>
+              <div style={{ background: 'linear-gradient(135deg, #dbeafe, #bfdbfe)', borderRadius: '0.75rem', padding: 'clamp(0.75rem, 2vw, 1rem)', border: '2px solid #3b82f6' }}>
+                <p style={{ fontSize: 'clamp(0.75rem, 2vw, 1rem)', fontWeight: '700', color: '#1e40af', marginBottom: '0.25rem' }}>📥 정의역 (Domain)</p>
+                <p style={{ fontSize: 'clamp(0.65rem, 1.5vw, 0.875rem)', color: '#1e40af', margin: 0 }}>
                   64가지 코돈 (UUU, UUC, ...)
                 </p>
               </div>
-              <div style={{ background: 'linear-gradient(135deg, #d1fae5, #a7f3d0)', borderRadius: '0.75rem', padding: '1rem', border: '2px solid #22c55e' }}>
-                <p style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', fontWeight: '700', color: '#15803d', marginBottom: '0.5rem' }}>📤 치역 (Range)</p>
-                <p style={{ fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)', color: '#15803d', margin: 0 }}>
+              <div style={{ background: 'linear-gradient(135deg, #d1fae5, #a7f3d0)', borderRadius: '0.75rem', padding: 'clamp(0.75rem, 2vw, 1rem)', border: '2px solid #22c55e' }}>
+                <p style={{ fontSize: 'clamp(0.75rem, 2vw, 1rem)', fontWeight: '700', color: '#15803d', marginBottom: '0.25rem' }}>📤 치역 (Range)</p>
+                <p style={{ fontSize: 'clamp(0.65rem, 1.5vw, 0.875rem)', color: '#15803d', margin: 0 }}>
                   20가지 아미노산 + 종결 신호
                 </p>
               </div>
@@ -322,12 +389,24 @@ export default function Sim3() {
           </div>
         )}
 
-        <div style={{ marginTop: 'clamp(2rem, 4vw, 3rem)', textAlign: 'center' }}>
+        <div style={{ marginTop: 'clamp(1rem, 3vw, 3rem)', textAlign: 'center' }}>
           <button
             onClick={() => router.push('/')}
-            style={{ padding: '0.75rem 2rem', background: 'white', color: '#374151', borderRadius: '9999px', boxShadow: '0 10px 15px rgba(0,0,0,0.1)', transition: 'all 0.3s', fontWeight: '600', border: 'none', cursor: 'pointer', fontSize: 'clamp(1rem, 2.5vw, 1.125rem)' }}
-            onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 20px 25px rgba(0,0,0,0.15)'; }}
-            onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 10px 15px rgba(0,0,0,0.1)'; }}
+            style={{ 
+              padding: 'clamp(0.5rem, 2vw, 0.75rem) clamp(1.5rem, 4vw, 2rem)', 
+              background: 'white', 
+              color: '#374151', 
+              borderRadius: '9999px', 
+              boxShadow: '0 4px 10px rgba(0,0,0,0.1)', 
+              transition: 'all 0.3s', 
+              fontWeight: '600', 
+              border: 'none', 
+              cursor: 'pointer', 
+              fontSize: 'clamp(0.875rem, 2.5vw, 1.125rem)',
+              touchAction: 'manipulation'
+            }}
+            onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 8px 20px rgba(0,0,0,0.15)'; }}
+            onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 4px 10px rgba(0,0,0,0.1)'; }}
           >
             ← 돌아가기
           </button>
