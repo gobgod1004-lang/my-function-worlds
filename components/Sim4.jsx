@@ -19,24 +19,27 @@ export default function Sim4() {
       name: '산소 (O₂)',
       icon: '🟠',
       type: '단순확산',
-      equation: 'y = x - 5',
+      equation: 'J = P(C_out - C_in)',
+      simpleEquation: 'y = 0.2(x - 5)',
       color: '#f97316',
-      calc: (out) => out - 5,
+      calc: (out) => 0.2 * (out - 5),
       molecule: '⚪',
-      hasProtein: false
+      hasProtein: false,
+      description: 'Fick의 확산 법칙',
+      params: 'P=0.2 (막 투과도), C_in=5 (세포 안 농도 고정)'
     },
     glucose: {
       name: '포도당',
       icon: '🟢',
       type: '운반체 촉진확산',
-      equation: 'y = 10(x-5)/(2+|x-5|)',
+      equation: 'J = V_max × C / (K_m + C)',
+      simpleEquation: 'y = 10x / (3 + x)',
       color: '#22c55e',
-      calc: (out) => {
-        const diff = out - 5;
-        return (10 * diff) / (2 + Math.abs(diff));
-      },
+      calc: (out) => (10 * out) / (3 + out),
       molecule: '🟩',
-      hasProtein: 'carrier'
+      hasProtein: 'carrier',
+      description: 'Michaelis-Menten 형태',
+      params: 'V_max=10 (최대 속도), K_m=3 (반포화 농도)'
     }
   };
 
@@ -193,16 +196,30 @@ export default function Sim4() {
           <div style={{ background: 'white', borderRadius: '1rem', padding: 'clamp(2rem, 4vw, 3rem)', boxShadow: '0 25px 50px rgba(0,0,0,0.25)' }}>
             <h3 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', fontWeight: '700', textAlign: 'center', marginBottom: '1.5rem' }}>농도 설정</h3>
             
+            {/* ✅ 함수 식 설명 추가 */}
+            <div style={{ background: 'linear-gradient(135deg, #f0f9ff, #e0f2fe)', borderRadius: '0.75rem', padding: 'clamp(1rem, 2vw, 1.5rem)', marginBottom: '1.5rem', border: '2px solid #0ea5e9' }}>
+              <p style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', fontWeight: '700', color: '#0c4a6e', marginBottom: '0.5rem', textAlign: 'center' }}>📐 {currentMode.description}</p>
+              <p style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', color: '#075985', marginBottom: '0.25rem', textAlign: 'center', fontFamily: 'monospace' }}>
+                원래 식: {currentMode.equation}
+              </p>
+              <p style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', color: '#0369a1', marginBottom: '0.25rem', textAlign: 'center', fontFamily: 'monospace' }}>
+                시뮬레이션 식: {currentMode.simpleEquation}
+              </p>
+              <p style={{ fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)', color: '#0284c7', margin: 0, textAlign: 'center' }}>
+                {currentMode.params}
+              </p>
+            </div>
+            
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1.5rem', marginBottom: '1.5rem' }}>
               <div style={{ background: 'linear-gradient(135deg, #dbeafe, #bfdbfe)', borderRadius: '0.75rem', padding: 'clamp(1.5rem, 3vw, 2rem)', textAlign: 'center', border: '3px solid #3b82f6' }}>
-                <p style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', fontWeight: '700', color: '#1e40af', marginBottom: '0.5rem' }}>🌊 세포 밖</p>
+                <p style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', fontWeight: '700', color: '#1e40af', marginBottom: '0.5rem' }}>🌊 세포 밖 (C_out)</p>
                 <p style={{ fontSize: 'clamp(2.5rem, 8vw, 4rem)', fontWeight: '700', color: '#1e3a8a', margin: 0 }}>{outsideConc.toFixed(1)}</p>
                 <p style={{ fontSize: 'clamp(1rem, 3vw, 1.5rem)', fontWeight: '700', color: '#3b82f6' }}>mM</p>
               </div>
               <div style={{ background: 'linear-gradient(135deg, #fce7f3, #fbcfe8)', borderRadius: '0.75rem', padding: 'clamp(1.5rem, 3vw, 2rem)', textAlign: 'center', border: '3px solid #ec4899' }}>
-                <p style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', fontWeight: '700', color: '#be185d', marginBottom: '0.5rem' }}>🏠 세포 안</p>
+                <p style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', fontWeight: '700', color: '#be185d', marginBottom: '0.5rem' }}>🏠 세포 안 (C_in)</p>
                 <p style={{ fontSize: 'clamp(2.5rem, 8vw, 4rem)', fontWeight: '700', color: '#831843', margin: 0 }}>5.0</p>
-                <p style={{ fontSize: 'clamp(1rem, 3vw, 1.5rem)', fontWeight: '700', color: '#ec4899' }}>mM</p>
+                <p style={{ fontSize: 'clamp(1rem, 3vw, 1.5rem)', fontWeight: '700', color: '#ec4899' }}>mM (고정값)</p>
               </div>
             </div>
 
@@ -386,17 +403,32 @@ export default function Sim4() {
               <LineChart data={graphData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="x" label={{ value: '세포 밖 농도 (mM)', position: 'insideBottom', offset: -5, style: { fontSize: 'clamp(0.7rem, 1.5vw, 0.875rem)' } }} domain={[0, 10]} />
-                <YAxis label={{ value: '속도', angle: -90, position: 'insideLeft', style: { fontSize: 'clamp(0.7rem, 1.5vw, 0.875rem)' } }} domain={mode === 'glucose' ? [-8, 8] : [-5, 5]} />
+                <YAxis label={{ value: '속도 (μmol/min)', angle: -90, position: 'insideLeft', style: { fontSize: 'clamp(0.7rem, 1.5vw, 0.875rem)' } }} domain={mode === 'glucose' ? [-2, 8] : [-1, 1]} />
                 <Tooltip />
                 <Line type="monotone" dataKey="y" stroke={currentMode.color} strokeWidth={3} dot={false} />
                 <ReferenceLine y={0} stroke="#666" strokeDasharray="3 3" />
-                <ReferenceLine x={5} stroke="#666" strokeDasharray="3 3" />
+                <ReferenceLine x={5} stroke="#666" strokeDasharray="3 3" label={{ value: 'C_in=5', position: 'top', style: { fontSize: '0.75rem', fill: '#666' } }} />
                 <ReferenceDot x={outsideConc} y={velocity} r={6} fill="#dc2626" stroke="#fff" strokeWidth={2} />
               </LineChart>
             </ResponsiveContainer>
             <div style={{ marginTop: '1rem', padding: '0.75rem', background: '#f9fafb', borderRadius: '0.5rem' }}>
-              <p style={{ fontSize: 'clamp(0.75rem, 1.8vw, 0.875rem)', fontWeight: '700', color: '#374151', margin: 0 }}>
+              <p style={{ fontSize: 'clamp(0.75rem, 1.8vw, 0.875rem)', fontWeight: '700', color: '#374151', margin: '0 0 0.5rem 0' }}>
                 현재: ({outsideConc.toFixed(1)} mM, {velocity.toFixed(2)} μmol/min)
+              </p>
+              <p style={{ fontSize: 'clamp(0.7rem, 1.5vw, 0.8rem)', color: '#6b7280', margin: 0, fontFamily: 'monospace' }}>
+                {currentMode.simpleEquation}
+              </p>
+            </div>
+
+            {/* ✅ 함수 설명 추가 */}
+            <div style={{ marginTop: '1rem', background: 'linear-gradient(135deg, #fef3c7, #fde68a)', borderRadius: '0.75rem', padding: '1rem', border: '2px solid #f59e0b' }}>
+              <p style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', fontWeight: '700', color: '#92400e', marginBottom: '0.5rem' }}>💡 함수 설명</p>
+              <p style={{ fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)', color: '#78350f', marginBottom: '0.25rem' }}>
+                <strong>원래 식:</strong> {currentMode.description}
+              </p>
+              <p style={{ fontSize: 'clamp(0.7rem, 1.5vw, 0.8rem)', color: '#78350f', margin: 0, fontFamily: 'monospace', lineHeight: '1.5' }}>
+                {currentMode.equation}<br/>
+                설정값: {currentMode.params}
               </p>
             </div>
           </div>
