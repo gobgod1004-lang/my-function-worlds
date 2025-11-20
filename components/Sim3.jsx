@@ -126,10 +126,9 @@ export default function Sim3() {
           </p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth < 1024 ? '1fr' : '1fr 1fr', gap: 'clamp(1.5rem, 3vw, 2rem)' }}>
-          {/* 왼쪽 영역: 염기 선택 + 코돈 조립 */}
+        {/* ✅ 수정: window 제거 */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 'clamp(1.5rem, 3vw, 2rem)' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(1.5rem, 3vw, 2rem)' }}>
-            {/* 염기 선택 */}
             <div style={{ background: 'white', borderRadius: '1.5rem', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', padding: 'clamp(1.5rem, 3vw, 2rem)' }}>
               <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', fontWeight: '700', color: '#1f2937', marginBottom: '1rem' }}>염기 선택</h2>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
@@ -158,7 +157,6 @@ export default function Sim3() {
               </div>
             </div>
 
-            {/* 코돈 조립 */}
             <div style={{ background: 'white', borderRadius: '1.5rem', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', padding: 'clamp(1.5rem, 3vw, 2rem)' }}>
               <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', fontWeight: '700', color: '#1f2937', marginBottom: '1rem' }}>코돈 조립</h2>
               <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginBottom: '1rem' }}>
@@ -189,7 +187,6 @@ export default function Sim3() {
                 ))}
               </div>
 
-              {/* 버튼 */}
               <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
                 <button
                   onClick={handleSubmit}
@@ -210,7 +207,6 @@ export default function Sim3() {
               </div>
             </div>
 
-            {/* 가이드 토글 */}
             <div style={{ textAlign: 'center' }}>
               <button
                 onClick={() => setShowGuide(!showGuide)}
@@ -223,8 +219,8 @@ export default function Sim3() {
             </div>
           </div>
 
-          {/* 오른쪽 영역: 결과 */}
-          <div style={{ background: 'white', borderRadius: '1.5rem', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', padding: 'clamp(1.5rem, 3vw, 2rem)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: window.innerWidth < 1024 ? 'auto' : '400px' }}>
+          {/* ✅ 수정: minHeight도 고정값으로 */}
+          <div style={{ background: 'white', borderRadius: '1.5rem', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', padding: 'clamp(1.5rem, 3vw, 2rem)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '400px' }}>
             <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', fontWeight: '700', color: '#1f2937', marginBottom: '1.5rem' }}>결과</h2>
             <div style={{ background: resultStyle.bg, borderRadius: '0.75rem', padding: 'clamp(1.5rem, 3vw, 2rem)', width: '100%', textAlign: 'center', transition: 'all 0.3s', border: codon === 'AUG' ? '3px solid #a855f7' : result?.abbr === 'STOP' ? '3px solid #dc2626' : 'none' }}>
               <p style={{ color: resultStyle.color, fontWeight: '700', fontSize: 'clamp(1.5rem, 4vw, 2rem)', marginBottom: '0.5rem' }}>
@@ -265,7 +261,6 @@ export default function Sim3() {
           </div>
         </div>
 
-        {/* 돌아가기 버튼 */}
         <div style={{ marginTop: 'clamp(2rem, 4vw, 3rem)', textAlign: 'center' }}>
           <button
             onClick={() => router.push('/')}
