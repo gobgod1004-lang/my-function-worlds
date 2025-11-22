@@ -41,7 +41,7 @@ export default function Sim5() {
       size: '소형견 (성견 3~4kg)',
       characteristic: '똑똑하고 사랑스러운 곱슬이! 저자극성 털이 특징이에요.',
       image: '🎀',
-      equation: 'y = {30(x-5)+130 (5≤x<6), 30(x-6)+160 (6≤x<7), ...}'
+      equation: 'y = {30(x-5)+130 (5≤x<6), 35(x-6)+160 (6≤x<7), ...}'
     },
     retriever: {
       name: '리트리버',
@@ -70,15 +70,15 @@ export default function Sim5() {
       if (x >= 11 && x <= 12) return 15 * (x - 11) + 225;
       if (x > 12) return 240; // 12주 이후 유지
     } else if (breedType === 'toypoodle') {
-      // 토이푸들: 5w=130, 6w=160, 7w=185, 8w=200, 9w=210, 10w=225, 11w=235, 12w=250 kcal
+      // 토이푸들: 5w=130, 6w=160, 7w=195, 8w=210, 9w=225, 10w=235, 11w=245, 12w=260 kcal
       if (x >= 5 && x < 6) return 30 * (x - 5) + 130;
-      if (x >= 6 && x < 7) return 30 * (x - 6) + 160;
-      if (x >= 7 && x < 8) return 15 * (x - 7) + 185;
-      if (x >= 8 && x < 9) return 10 * (x - 8) + 200;
-      if (x >= 9 && x < 10) return 15 * (x - 9) + 210;
-      if (x >= 10 && x < 11) return 10 * (x - 10) + 225;
-      if (x >= 11 && x <= 12) return 15 * (x - 11) + 235;
-      if (x > 12) return 250; // 12주 이후 유지
+      if (x >= 6 && x < 7) return 35 * (x - 6) + 160;
+      if (x >= 7 && x < 8) return 15 * (x - 7) + 195;
+      if (x >= 8 && x < 9) return 15 * (x - 8) + 210;
+      if (x >= 9 && x < 10) return 10 * (x - 9) + 225;
+      if (x >= 10 && x < 11) return 10 * (x - 10) + 235;
+      if (x >= 11 && x <= 12) return 15 * (x - 11) + 245;
+      if (x > 12) return 260; // 12주 이후 유지
     } else if (breedType === 'retriever') {
       // 리트리버: 5w=220, 6w=280, 7w=340, 8w=390, 9w=430, 10w=480, 11w=520, 12w=570 kcal
       if (x >= 5 && x < 6) return 60 * (x - 5) + 220;
