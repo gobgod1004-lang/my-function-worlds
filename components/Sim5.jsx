@@ -6,7 +6,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 export default function Sim5() {
   const router = useRouter();
   const [breed, setBreed] = useState('pomeranian');
-  const [weekAge, setWeekAge] = useState(15);
+  const [weekAge, setWeekAge] = useState(8);
   const [showGuide, setShowGuide] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -16,12 +16,8 @@ export default function Sim5() {
       setIsMobile(window.innerWidth < 1024);
     };
     
-    // 초기 설정
     handleResize();
-    
-    // 리사이즈 이벤트 리스너
     window.addEventListener('resize', handleResize);
-    
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
@@ -34,7 +30,8 @@ export default function Sim5() {
       bgGradient: 'linear-gradient(135deg, #fed7aa, #fdba74)',
       size: '소형견 (성견 2~3kg)',
       characteristic: '작고 귀여운 털뭉치! 활발하고 사교적이에요.',
-      image: '🦊'
+      image: '🦊',
+      equation: 'y = {30(x-5)+120 (5≤x<6), 25(x-6)+150 (6≤x<7), ...}'
     },
     toypoodle: {
       name: '토이푸들',
@@ -43,7 +40,8 @@ export default function Sim5() {
       bgGradient: 'linear-gradient(135deg, #fce7f3, #fbcfe8)',
       size: '소형견 (성견 3~4kg)',
       characteristic: '똑똑하고 사랑스러운 곱슬이! 저자극성 털이 특징이에요.',
-      image: '🎀'
+      image: '🎀',
+      equation: 'y = {30(x-5)+130 (5≤x<6), 30(x-6)+160 (6≤x<7), ...}'
     },
     retriever: {
       name: '리트리버',
@@ -52,29 +50,45 @@ export default function Sim5() {
       bgGradient: 'linear-gradient(135deg, #fef3c7, #fde68a)',
       size: '대형견 (성견 25~35kg)',
       characteristic: '온순하고 충성스러운 대형견! 가족과 함께하길 좋아해요.',
-      image: '🌟'
+      image: '🌟',
+      equation: 'y = {60(x-5)+220 (5≤x<6), 60(x-6)+280 (6≤x<7), ...}'
     }
   };
 
   const currentBreed = breedInfo[breed];
 
-  // 사료량 계산 함수
+  // 🔥 사료량 계산 함수 (실제 칼로리 기반 piecewise 함수)
   const calculateFood = (x, breedType) => {
     if (breedType === 'pomeranian') {
-      if (x >= 6 && x < 10) return 0.02 * Math.pow(x - 6, 2) + 1;
-      if (x >= 10 && x < 18) return 0.02 * Math.pow(x - 10, 2) + 2;
-      if (x >= 18 && x < 26) return 0.02 * Math.pow(x - 18, 2) + 3;
-      if (x >= 26) return 0.02 * Math.pow(x - 26, 2) + 4;
+      // 포메라니안: 5w=120, 6w=150, 7w=175, 8w=190, 9w=200, 10w=215, 11w=225, 12w=240 kcal
+      if (x >= 5 && x < 6) return 30 * (x - 5) + 120;
+      if (x >= 6 && x < 7) return 25 * (x - 6) + 150;
+      if (x >= 7 && x < 8) return 15 * (x - 7) + 175;
+      if (x >= 8 && x < 9) return 10 * (x - 8) + 190;
+      if (x >= 9 && x < 10) return 15 * (x - 9) + 200;
+      if (x >= 10 && x < 11) return 10 * (x - 10) + 215;
+      if (x >= 11 && x <= 12) return 15 * (x - 11) + 225;
+      if (x > 12) return 240; // 12주 이후 유지
     } else if (breedType === 'toypoodle') {
-      if (x >= 6 && x < 10) return 0.015 * Math.pow(x - 6, 2) + 0.9;
-      if (x >= 10 && x < 18) return 0.015 * Math.pow(x - 10, 2) + 1;
-      if (x >= 18 && x < 26) return 0.015 * Math.pow(x - 18, 2) + 2;
-      if (x >= 26) return 0.015 * Math.pow(x - 26, 2) + 3.5;
+      // 토이푸들: 5w=130, 6w=160, 7w=185, 8w=200, 9w=210, 10w=225, 11w=235, 12w=250 kcal
+      if (x >= 5 && x < 6) return 30 * (x - 5) + 130;
+      if (x >= 6 && x < 7) return 30 * (x - 6) + 160;
+      if (x >= 7 && x < 8) return 15 * (x - 7) + 185;
+      if (x >= 8 && x < 9) return 10 * (x - 8) + 200;
+      if (x >= 9 && x < 10) return 15 * (x - 9) + 210;
+      if (x >= 10 && x < 11) return 10 * (x - 10) + 225;
+      if (x >= 11 && x <= 12) return 15 * (x - 11) + 235;
+      if (x > 12) return 250; // 12주 이후 유지
     } else if (breedType === 'retriever') {
-      if (x >= 6 && x < 10) return 0.05 * Math.pow(x - 6, 2) + 7;
-      if (x >= 10 && x < 18) return 0.05 * Math.pow(x - 10, 2) + 11;
-      if (x >= 18 && x < 26) return 0.05 * Math.pow(x - 18, 2) + 15;
-      if (x >= 26) return 0.05 * Math.pow(x - 26, 2) + 30;
+      // 리트리버: 5w=220, 6w=280, 7w=340, 8w=390, 9w=430, 10w=480, 11w=520, 12w=570 kcal
+      if (x >= 5 && x < 6) return 60 * (x - 5) + 220;
+      if (x >= 6 && x < 7) return 60 * (x - 6) + 280;
+      if (x >= 7 && x < 8) return 50 * (x - 7) + 340;
+      if (x >= 8 && x < 9) return 40 * (x - 8) + 390;
+      if (x >= 9 && x < 10) return 50 * (x - 9) + 430;
+      if (x >= 10 && x < 11) return 40 * (x - 10) + 480;
+      if (x >= 11 && x <= 12) return 50 * (x - 11) + 520;
+      if (x > 12) return 570; // 12주 이후 유지
     }
     return 0;
   };
@@ -84,10 +98,10 @@ export default function Sim5() {
   // 그래프 데이터 생성
   const graphData = useMemo(() => {
     const data = [];
-    for (let x = 6; x <= 52; x += 0.5) {
+    for (let x = 5; x <= 16; x += 0.1) {
       data.push({
-        x: Math.round(x),
-        y: Math.round(calculateFood(x, breed))
+        x: parseFloat(x.toFixed(1)),
+        y: calculateFood(x, breed)
       });
     }
     return data;
@@ -95,7 +109,7 @@ export default function Sim5() {
 
   // 성장 단계
   const getGrowthStage = (weeks) => {
-    if (weeks < 10) {
+    if (weeks < 8) {
       return {
         stage: '급성장기',
         desc: '빠르게 자라는 시기예요. 영양 공급이 매우 중요해요!',
@@ -103,7 +117,7 @@ export default function Sim5() {
         bg: 'linear-gradient(135deg, #fecaca, #fca5a5)',
         emoji: '🌱'
       };
-    } else if (weeks < 18) {
+    } else if (weeks < 12) {
       return {
         stage: '성장기',
         desc: '꾸준히 자라는 시기예요. 균형잡힌 식사가 필요해요.',
@@ -111,21 +125,13 @@ export default function Sim5() {
         bg: 'linear-gradient(135deg, #fef3c7, #fde68a)',
         emoji: '🌿'
       };
-    } else if (weeks < 26) {
+    } else {
       return {
-        stage: '후기 성장기',
-        desc: '성견에 가까워지고 있어요. 체중 관리를 시작해야 해요.',
+        stage: '유지기',
+        desc: '성장이 안정되었어요. 일정한 칼로리를 유지하세요!',
         color: '#16a34a',
         bg: 'linear-gradient(135deg, #d1fae5, #a7f3d0)',
         emoji: '🌳'
-      };
-    } else {
-      return {
-        stage: '성견',
-        desc: '다 자란 성견이에요. 건강 유지에 집중하세요!',
-        color: '#2563eb',
-        bg: 'linear-gradient(135deg, #dbeafe, #bfdbfe)',
-        emoji: '🎯'
       };
     }
   };
@@ -177,7 +183,7 @@ export default function Sim5() {
             color: '#1f2937',
             marginBottom: '0.5rem'
           }}>
-            🐕 강아지 주령별 사료량
+            🐕 강아지 주령별 칼로리 요구량
           </h1>
           <p style={{ color: '#6b7280', fontSize: 'clamp(0.875rem, 2vw, 1rem)' }}>
             강아지의 나이에 따라 얼마나 먹어야 할까요?
@@ -260,6 +266,22 @@ export default function Sim5() {
               {' '}{currentBreed.characteristic}
             </p>
           </div>
+
+          {/* 🔥 함수 식 설명 추가 */}
+          <div style={{
+            marginTop: '1rem',
+            padding: '1rem',
+            background: 'linear-gradient(135deg, #f0f9ff, #e0f2fe)',
+            borderRadius: '0.75rem',
+            border: '2px solid #0ea5e9'
+          }}>
+            <p style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', fontWeight: '700', color: '#0c4a6e', marginBottom: '0.5rem' }}>
+              📐 Piecewise 함수 (구간별 선형 함수)
+            </p>
+            <p style={{ fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)', color: '#075985', margin: 0, fontFamily: 'monospace', lineHeight: '1.6' }}>
+              {currentBreed.equation}
+            </p>
+          </div>
         </div>
 
         <div style={{
@@ -322,8 +344,9 @@ export default function Sim5() {
             <div style={{ marginBottom: '1.5rem' }}>
               <input
                 type="range"
-                min="6"
-                max="52"
+                min="5"
+                max="16"
+                step="1"
                 value={weekAge}
                 onChange={(e) => setWeekAge(parseInt(e.target.value))}
                 style={{
@@ -332,7 +355,7 @@ export default function Sim5() {
                   borderRadius: '4px',
                   outline: 'none',
                   appearance: 'none',
-                  background: `linear-gradient(to right, ${currentBreed.color} 0%, ${currentBreed.color} ${((weekAge - 6) / (52 - 6)) * 100}%, #e5e7eb ${((weekAge - 6) / (52 - 6)) * 100}%, #e5e7eb 100%)`
+                  background: `linear-gradient(to right, ${currentBreed.color} 0%, ${currentBreed.color} ${((weekAge - 5) / (16 - 5)) * 100}%, #e5e7eb ${((weekAge - 5) / (16 - 5)) * 100}%, #e5e7eb 100%)`
                 }}
               />
               <div style={{
@@ -342,8 +365,8 @@ export default function Sim5() {
                 color: '#6b7280',
                 marginTop: '0.5rem'
               }}>
-                <span>6주</span>
-                <span>52주 (1년)</span>
+                <span>5주</span>
+                <span>16주 (4개월)</span>
               </div>
             </div>
 
@@ -353,7 +376,7 @@ export default function Sim5() {
               gridTemplateColumns: 'repeat(3, 1fr)',
               gap: '0.5rem'
             }}>
-              {[8, 12, 16, 20, 26, 40].map(week => (
+              {[5, 6, 7, 8, 9, 10, 11, 12].map(week => (
                 <button
                   key={week}
                   onClick={() => setWeekAge(week)}
@@ -398,10 +421,10 @@ export default function Sim5() {
               color: '#1f2937',
               marginBottom: '1rem'
             }}>
-              권장 사료량
+              권장 칼로리
             </h2>
 
-            {/* 사료량 표시 */}
+            {/* 칼로리 표시 */}
             <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
               <div style={{
                 display: 'inline-block',
@@ -412,7 +435,7 @@ export default function Sim5() {
                 border: `3px solid ${growthStage.color}`
               }}>
                 <div style={{ fontSize: 'clamp(3rem, 8vw, 5rem)', marginBottom: '0.5rem' }}>
-                  🍖
+                  🔥
                 </div>
                 <p style={{
                   fontSize: 'clamp(2.5rem, 8vw, 4rem)',
@@ -420,14 +443,22 @@ export default function Sim5() {
                   color: growthStage.color,
                   margin: 0
                 }}>
-                  {foodAmount.toFixed(1)}kg
+                  {Math.round(foodAmount)}
+                </p>
+                <p style={{
+                  fontSize: 'clamp(1.5rem, 4vw, 2rem)',
+                  fontWeight: '600',
+                  color: growthStage.color,
+                  margin: 0
+                }}>
+                  kcal
                 </p>
                 <p style={{
                   fontSize: 'clamp(0.875rem, 2vw, 1rem)',
                   color: '#6b7280',
                   marginTop: '0.5rem'
                 }}>
-                  하루 권장 사료량
+                  하루 권장 칼로리
                 </p>
               </div>
             </div>
@@ -521,9 +552,9 @@ export default function Sim5() {
             fontSize: 'clamp(1.25rem, 3vw, 1.5rem)',
             fontWeight: '700',
             color: '#1f2937',
-            marginBottom: '1.5rem'
+            marginBottom: '1rem'
           }}>
-            📈 주령별 사료량 변화 그래프
+            📈 주령별 칼로리 요구량 그래프 (Piecewise 함수)
           </h2>
           <ResponsiveContainer width="100%" height={400}>
             <LineChart data={graphData}>
@@ -536,24 +567,22 @@ export default function Sim5() {
                   offset: -5,
                   style: { fontSize: 'clamp(0.75rem, 1.8vw, 0.875rem)' }
                 }}
-                domain={[6, 52]}
-                ticks={[6, 10, 18, 26, 34, 42, 52]}
-                tickFormatter={(tick) => Math.round(tick)}
+                domain={[5, 16]}
+                ticks={[5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]}
                 style={{ fontSize: 'clamp(0.7rem, 1.5vw, 0.875rem)' }}
               />
               <YAxis
                 label={{
-                  value: '사료량 (kg)',
+                  value: '칼로리 (kcal)',
                   angle: -90,
                   position: 'insideLeft',
                   style: { fontSize: 'clamp(0.75rem, 1.8vw, 0.875rem)' }
                 }}
-                domain={[0, breed === 'retriever' ? 35 : 8]}
-                tickFormatter={(tick) => Math.round(tick)}
+                domain={[0, breed === 'retriever' ? 600 : 280]}
                 style={{ fontSize: 'clamp(0.7rem, 1.5vw, 0.875rem)' }}
               />
               <Tooltip
-                formatter={(value) => `${Math.round(value)}kg`}
+                formatter={(value) => `${Math.round(value)} kcal`}
                 labelFormatter={(label) => `${label}주 (${getMonthAge(label)})`}
                 contentStyle={{
                   fontSize: 'clamp(0.75rem, 1.8vw, 0.875rem)',
@@ -591,7 +620,23 @@ export default function Sim5() {
               color: '#374151',
               margin: 0
             }}>
-              현재 위치: {weekAge}주 ({getMonthAge(weekAge)}) - {foodAmount.toFixed(1)}kg
+              현재 위치: {weekAge}주 ({getMonthAge(weekAge)}) - {Math.round(foodAmount)} kcal
+            </p>
+          </div>
+
+          {/* 🔥 함수 설명 추가 */}
+          <div style={{
+            marginTop: '1rem',
+            background: 'linear-gradient(135deg, #fef3c7, #fde68a)',
+            borderRadius: '0.75rem',
+            padding: '1rem',
+            border: '2px solid #f59e0b'
+          }}>
+            <p style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)', fontWeight: '700', color: '#92400e', marginBottom: '0.5rem' }}>
+              💡 Piecewise 함수란?
+            </p>
+            <p style={{ fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)', color: '#78350f', margin: 0, lineHeight: '1.5' }}>
+              구간별로 다른 선형 함수를 적용하는 방식입니다. 강아지의 성장 속도가 주령에 따라 다르기 때문에, 각 구간마다 적절한 기울기를 가진 일차함수를 사용했어요. 예: 5~6주는 빠르게 증가(기울기 큼), 11~12주는 완만하게 증가(기울기 작음)
             </p>
           </div>
         </div>
